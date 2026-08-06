@@ -6,7 +6,7 @@ import { usePaymentMethods } from '../hooks/usePaymentMethods';
 import ExpenseForm from '../components/ExpenseForm';
 import MonthSelector from '../components/MonthSelector';
 import WalletFilter from '../components/WalletFilter';
-import { format } from 'date-fns';
+import { format, parseISO, addMonths } from 'date-fns';
 import './Expenses.css';
 
 const formatCurrency = (amount) => {
@@ -21,7 +21,7 @@ const Expenses = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   
-  const { expenses, deleteExpense, addExpense, updateExpense } = useExpenses(selectedMonth, selectedYear);
+  const { expenses, deleteExpense, addExpense, addMultipleExpenses, updateExpense } = useExpenses(selectedMonth, selectedYear);
   const { wallets } = useWallets();
   const { categories } = useCategories();
   const { paymentMethods } = usePaymentMethods();
@@ -125,9 +125,27 @@ const Expenses = () => {
           onClose={handleCloseForm} 
           onSave={async (data) => {
             if (editingExpense) {
-              await updateExpense(editingExpense.id, data);
+              const { is_installment, installment_months, ...updateData } = data;
+              await updateExpense(editingExpense.id, updateData);
             } else {
-              await addExpense(data);
+              if (data.is_installment && data.installment_months > 1) {
+                const { is_installment, installment_months, ...expenseData } = data;
+                const startDate = parseISO(expenseData.expense_date);
+                
+                const expensesToCreate = [];
+                for (let i = 0; i < installment_months; i++) {
+                  const installmentDate = format(addMonths(startDate, i), 'yyyy-MM-dd');
+                  expensesToCreate.push({
+                    ...expenseData,
+                    description: `${expenseData.description} (Installment ${i + 1}/${installment_months})`,
+                    expense_date: installmentDate
+                  });
+                }
+                await addMultipleExpenses(expensesToCreate);
+              } else {
+                const { is_installment, installment_months, ...expenseData } = data;
+                await addExpense(expenseData);
+              }
             }
             handleCloseForm();
           }}

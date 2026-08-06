@@ -9,6 +9,8 @@ const ExpenseForm = ({ isOpen, onClose, onSave, expense, wallets = [], categorie
   const [categoryId, setCategoryId] = useState('');
   const [paymentMethodId, setPaymentMethodId] = useState('');
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [isInstallment, setIsInstallment] = useState(false);
+  const [installmentMonths, setInstallmentMonths] = useState(2);
 
   useEffect(() => {
     if (expense) {
@@ -25,6 +27,8 @@ const ExpenseForm = ({ isOpen, onClose, onSave, expense, wallets = [], categorie
       setCategoryId(categories.length > 0 ? categories[0].id : '');
       setPaymentMethodId(paymentMethods.length > 0 ? paymentMethods[0].id : '');
       setDate(format(new Date(), 'yyyy-MM-dd'));
+      setIsInstallment(false);
+      setInstallmentMonths(2);
     }
   }, [expense, wallets, categories, paymentMethods, isOpen]);
 
@@ -40,7 +44,9 @@ const ExpenseForm = ({ isOpen, onClose, onSave, expense, wallets = [], categorie
       wallet_id: walletId,
       category_id: categoryId,
       payment_method_id: paymentMethodId,
-      expense_date: date
+      expense_date: date,
+      is_installment: isInstallment,
+      installment_months: isInstallment ? parseInt(installmentMonths, 10) : 1
     });
   };
 
@@ -122,6 +128,33 @@ const ExpenseForm = ({ isOpen, onClose, onSave, expense, wallets = [], categorie
               />
             </div>
           </div>
+          
+          {!expense && (
+            <div className="form-row">
+              <div className="form-group toggle-group" style={{ flex: '1', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
+                <label style={{ margin: 0 }}>Is this an installment plan?</label>
+                <div className="status-toggle" onClick={() => setIsInstallment(!isInstallment)} style={{ marginTop: 0 }}>
+                  <div className={`toggle-switch ${isInstallment ? 'active' : ''}`}>
+                    <div className="toggle-thumb"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {isInstallment && (
+                <div className="form-group" style={{ flex: '1' }}>
+                  <label>Number of Months</label>
+                  <input
+                    type="number"
+                    min="2"
+                    max="60"
+                    value={installmentMonths}
+                    onChange={(e) => setInstallmentMonths(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="modal-actions">
             <button type="button" onClick={onClose} className="btn-cancel">Cancel</button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { format, parseISO, addDays, isBefore, isSameMonth } from 'date-fns';
+import { format, parseISO, addDays, addMonths, isBefore, isSameMonth } from 'date-fns';
 import { useExpenses } from '../hooks/useExpenses';
 import { useIncome } from '../hooks/useIncome';
 import { useWallets } from '../hooks/useWallets';
@@ -27,7 +27,7 @@ const Calendar = () => {
   const [showExpenseForm, setShowExpenseForm] = useState(false);
   const [showIncomeForm, setShowIncomeForm] = useState(false);
   
-  const { expenses, addExpense, updateExpense, deleteExpense } = useExpenses(selectedMonth, selectedYear);
+  const { expenses, addExpense, addMultipleExpenses, updateExpense, deleteExpense } = useExpenses(selectedMonth, selectedYear);
   const { income, addIncome, updateIncome, deleteIncome } = useIncome(selectedMonth, selectedYear);
   const { recurring } = useRecurring();
   const { wallets } = useWallets();
@@ -213,7 +213,24 @@ const Calendar = () => {
           isOpen={showExpenseForm}
           onClose={() => setShowExpenseForm(false)}
           onSave={async (data) => {
-            await addExpense(data);
+            if (data.is_installment && data.installment_months > 1) {
+              const { is_installment, installment_months, ...expenseData } = data;
+              const startDate = parseISO(expenseData.expense_date);
+              
+              const expensesToCreate = [];
+              for (let i = 0; i < installment_months; i++) {
+                const installmentDate = format(addMonths(startDate, i), 'yyyy-MM-dd');
+                expensesToCreate.push({
+                  ...expenseData,
+                  description: `${expenseData.description} (Installment ${i + 1}/${installment_months})`,
+                  expense_date: installmentDate
+                });
+              }
+              await addMultipleExpenses(expensesToCreate);
+            } else {
+              const { is_installment, installment_months, ...expenseData } = data;
+              await addExpense(expenseData);
+            }
             setShowExpenseForm(false);
           }}
           wallets={wallets}

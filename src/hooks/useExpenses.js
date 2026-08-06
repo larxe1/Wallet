@@ -96,6 +96,36 @@ export const useExpenses = (month, year) => {
     }
   };
 
+  const addMultipleExpenses = async (expensesArray) => {
+    setLoading(true);
+    try {
+      const payloads = expensesArray.map(exp => ({
+        ...exp,
+        user_id: user.id,
+        expense_date: exp.expense_date || format(new Date(), 'yyyy-MM-dd'),
+      }));
+      
+      const { data: newExps, error: err } = await supabase
+        .from('expenses')
+        .insert(payloads)
+        .select(`
+          *,
+          wallets(name, color),
+          categories(name, icon),
+          payment_methods(label, type)
+        `);
+        
+      if (err) throw err;
+      setData([...(newExps || []), ...data]);
+      return { data: newExps, error: null };
+    } catch (err) {
+      setError(err.message);
+      return { data: null, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateExpense = async (id, updates) => {
     setLoading(true);
     try {
@@ -143,5 +173,5 @@ export const useExpenses = (month, year) => {
     }
   };
 
-  return { data, expenses: data, loading, error, fetchExpenses, addExpense, updateExpense, deleteExpense };
+  return { data, expenses: data, loading, error, fetchExpenses, addExpense, addMultipleExpenses, updateExpense, deleteExpense };
 };
