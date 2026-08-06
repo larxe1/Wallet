@@ -17,7 +17,8 @@ const Dashboard = () => {
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-  const [timeframe, setTimeframe] = useState('monthly'); // 'monthly', 'annual', 'total'
+  const [timeframe, setTimeframe] = useState('monthly'); // 'monthly', 'annual'
+  const [isPrivacyMode, setIsPrivacyMode] = useState(true);
   const [excludedCategoryIds, setExcludedCategoryIds] = useState(new Set());
   
   // Track which tab is active for each wallet
@@ -60,7 +61,29 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Dashboard</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <h1>Dashboard</h1>
+          <button 
+            onClick={() => setIsPrivacyMode(!isPrivacyMode)}
+            className="privacy-toggle-btn"
+            title={isPrivacyMode ? "Show Balances" : "Hide Balances"}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+              color: 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px',
+              borderRadius: '50%',
+              transition: 'background 0.2s, color 0.2s'
+            }}
+          >
+            {isPrivacyMode ? '👁️‍🗨️' : '👁️'}
+          </button>
+        </div>
         
         <div className="header-controls">
           <div className={`header-month-selector ${timeframe === 'annual' ? 'hide-month-dropdown' : ''}`}>
@@ -110,6 +133,7 @@ const Dashboard = () => {
                     totalIncome={walletData.totalIncome}
                     totalExpenses={walletData.totalExpenses}
                     walletColor={walletData.wallet.color}
+                    isPrivacyMode={isPrivacyMode}
                   />
                 </div>
                 

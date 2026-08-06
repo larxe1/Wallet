@@ -68,6 +68,11 @@
   }
 }
 
+.privacy-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+}
+
 .dashboard-filters {
   margin-bottom: 24px;
 }
