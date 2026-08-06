@@ -29,7 +29,7 @@ const Sidebar = () => {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-container">
-            <h1 className="logo-text">WalletWatch</h1>
+            <h1 className="logo-text">Eli Tracker</h1>
           </div>
         </div>
         
