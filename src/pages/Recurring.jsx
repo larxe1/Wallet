@@ -64,7 +64,7 @@ const Recurring = () => {
                 <div className="item-main">
                   <h3>{item.description || item.categories?.name || 'Transaction'}</h3>
                   <div className="item-meta">
-                    <span className="wallet-badge" style={{ backgroundColor: item.wallets?.color || '#ccc' }}>
+                    <span className="wallet-badge" style={{ color: item.wallets?.color || 'var(--text-secondary)' }}>
                       {item.wallets?.name || 'No Wallet'}
                     </span>
                     <span className={`type-badge ${item.type === 'income' ? 'income' : 'expense'}`}>

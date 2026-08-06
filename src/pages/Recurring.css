@@ -29,15 +29,44 @@
   margin-bottom: 12px;
 }
 
-.rc-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
+.item-main {
+  flex: 1;
+  min-width: 0;
+  padding-right: 12px;
 }
 
-.rc-amount {
+.item-main h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.wallet-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  /* Removed background highlight, using pure text color defined in inline styles */
+}
+
+.item-right {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.item-amount {
   font-family: var(--font-mono);
   font-weight: 600;
-  color: var(--accent-danger);
+  font-size: 1.1rem;
+  white-space: nowrap;
 }
 
 .rc-details {
