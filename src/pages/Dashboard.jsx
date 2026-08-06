@@ -17,6 +17,7 @@ const Dashboard = () => {
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [timeframe, setTimeframe] = useState('monthly'); // 'monthly', 'annual', 'total'
   const [excludedCategoryIds, setExcludedCategoryIds] = useState(new Set());
   
   // Track which tab is active for each wallet
@@ -27,8 +28,8 @@ const Dashboard = () => {
   const { categories } = useCategories();
   
   useEffect(() => {
-    fetchDashboardData(selectedMonth, selectedYear);
-  }, [selectedMonth, selectedYear, fetchDashboardData]);
+    fetchDashboardData(selectedMonth, selectedYear, timeframe);
+  }, [selectedMonth, selectedYear, timeframe, fetchDashboardData]);
   
   const handleCategoryToggle = (id) => {
     const newExcluded = new Set(excludedCategoryIds);
@@ -58,15 +59,41 @@ const Dashboard = () => {
   
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>Dashboard</h1>
-        <MonthSelector 
-          month={selectedMonth} 
-          year={selectedYear} 
-          minMonth={7}
-          minYear={2026}
-          onChange={(m, y) => { setSelectedMonth(m); setSelectedYear(y); }} 
-        />
+      <header className="dashboard-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+          <h1>Dashboard</h1>
+          <div className="timeframe-toggle" style={{ display: 'flex', background: 'var(--bg-secondary)', borderRadius: '8px', padding: '4px' }}>
+            {['monthly', 'annual'].map(t => (
+              <button 
+                key={t}
+                onClick={() => setTimeframe(t)}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: timeframe === t ? 'var(--accent-primary)' : 'transparent',
+                  color: timeframe === t ? 'white' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                  textTransform: 'capitalize',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className={timeframe === 'annual' ? 'hide-month-dropdown' : ''} style={{ alignSelf: 'center' }}>
+          <MonthSelector 
+            month={selectedMonth} 
+            year={selectedYear} 
+            minMonth={7}
+            minYear={2026}
+            onChange={(m, y) => { setSelectedMonth(m); setSelectedYear(y); }} 
+          />
+        </div>
       </header>
       
       <div className="dashboard-content">
@@ -107,7 +134,7 @@ const Dashboard = () => {
                       className={`wallet-tab-btn ${activeTab === 'trend' ? 'active' : ''}`}
                       onClick={() => setTabForWallet(walletId, 'trend')}
                     >
-                      6-Month Trend
+                      {timeframe === 'monthly' ? '6-Month Trend' : '12-Month Trend'}
                     </button>
                     <button 
                       className={`wallet-tab-btn ${activeTab === 'category' ? 'active' : ''}`}
@@ -119,7 +146,7 @@ const Dashboard = () => {
                       className={`wallet-tab-btn ${activeTab === 'averages' ? 'active' : ''}`}
                       onClick={() => setTabForWallet(walletId, 'averages')}
                     >
-                      3M Averages
+                      {timeframe === 'monthly' ? '3M Averages' : '12M Averages'}
                     </button>
                   </div>
                   
