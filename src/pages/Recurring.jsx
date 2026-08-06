@@ -125,12 +125,18 @@ const Recurring = () => {
           paymentMethods={paymentMethods}
           onClose={handleCloseForm} 
           onSave={async (data) => {
+            let result;
             if (editingItem) {
-              await updateRecurring(editingItem.id, data);
+              result = await updateRecurring(editingItem.id, data);
             } else {
-              await addRecurring(data);
+              result = await addRecurring(data);
             }
-            handleCloseForm();
+            
+            if (result && result.error) {
+              alert("Error saving: " + result.error);
+            } else {
+              handleCloseForm();
+            }
           }}
         />
       )}
