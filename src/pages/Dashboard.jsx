@@ -59,40 +59,31 @@ const Dashboard = () => {
   
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-          <h1>Dashboard</h1>
-          <div className="timeframe-toggle" style={{ display: 'flex', background: 'var(--bg-secondary)', borderRadius: '8px', padding: '4px' }}>
+      <header className="dashboard-header">
+        <h1>Dashboard</h1>
+        
+        <div className="header-controls">
+          <div className={`header-month-selector ${timeframe === 'annual' ? 'hide-month-dropdown' : ''}`}>
+            <MonthSelector 
+              month={selectedMonth} 
+              year={selectedYear} 
+              minMonth={7}
+              minYear={2026}
+              onChange={(m, y) => { setSelectedMonth(m); setSelectedYear(y); }} 
+            />
+          </div>
+
+          <div className="timeframe-toggle">
             {['monthly', 'annual'].map(t => (
               <button 
                 key={t}
+                className={timeframe === t ? 'active' : ''}
                 onClick={() => setTimeframe(t)}
-                style={{
-                  padding: '6px 16px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: timeframe === t ? 'var(--accent-primary)' : 'transparent',
-                  color: timeframe === t ? 'white' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  textTransform: 'capitalize',
-                  transition: 'all 0.2s'
-                }}
               >
                 {t}
               </button>
             ))}
           </div>
-        </div>
-        
-        <div className={timeframe === 'annual' ? 'hide-month-dropdown' : ''} style={{ alignSelf: 'center' }}>
-          <MonthSelector 
-            month={selectedMonth} 
-            year={selectedYear} 
-            minMonth={7}
-            minYear={2026}
-            onChange={(m, y) => { setSelectedMonth(m); setSelectedYear(y); }} 
-          />
         </div>
       </header>
       
