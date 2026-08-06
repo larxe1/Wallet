@@ -27,6 +27,10 @@
   margin-bottom: 24px;
 }
 
+.dashboard-balances.single-balance {
+  grid-template-columns: minmax(200px, 400px);
+}
+
 .dashboard-content {
   display: grid;
   grid-template-columns: 1fr 250px;
@@ -45,6 +49,27 @@
   gap: 24px;
 }
 
+.dashboard-separated {
+  gap: 64px;
+}
+
+.wallet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.wallet-section-header {
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.wallet-section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
 .chart-section {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -54,10 +79,10 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-.chart-section h2 {
+.chart-section h3 {
   margin-top: 0;
   margin-bottom: 16px;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: var(--text-primary);
 }
 
@@ -83,6 +108,13 @@
   padding: 20px;
 }
 
+.averages-section h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+}
+
 .averages-table {
   width: 100%;
   border-collapse: collapse;
@@ -103,6 +135,13 @@
 .averages-table td:last-child {
   text-align: right;
   font-family: var(--font-mono);
+}
+
+.empty-row {
+  text-align: center !important;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 24px !important;
 }
 
 .dashboard-loading {

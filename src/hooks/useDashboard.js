@@ -15,11 +15,10 @@ export const useDashboard = () => {
     setError(null);
     try {
       // 1. Calculate dates for current month
-      // month is 0-indexed in JS
       const startOfMonth = new Date(year, month, 1);
       const endOfMonth = new Date(year, month + 1, 0);
 
-      // 2. Fetch wallets FIRST to identify Alex's wallet
+      // 2. Fetch wallets FIRST and initialize our byWallet structure
       const { data: rawWallets, error: walError } = await supabase
         .from('wallets')
         .select('id, name, color')
@@ -27,10 +26,22 @@ export const useDashboard = () => {
         
       if (walError) throw walError;
       
-      const alexId = (rawWallets || []).find(w => w.name.toLowerCase() === 'alex')?.id;
+      const byWallet = {};
+      (rawWallets || []).forEach(w => {
+         if (w.name.toLowerCase() !== 'alex') {
+             byWallet[w.id] = {
+                 wallet: w,
+                 expenses: [],
+                 trendData: [],
+                 averages: [],
+                 totalIncome: 0,
+                 totalExpenses: 0
+             };
+         }
+      });
 
       // 3. Fetch expenses for the month
-      let expQuery = supabase
+      const { data: rawExpenses, error: expError } = await supabase
         .from('expenses')
         .select(`
           amount,
@@ -42,126 +53,112 @@ export const useDashboard = () => {
         .eq('user_id', user.id)
         .gte('expense_date', format(startOfMonth, 'yyyy-MM-dd'))
         .lte('expense_date', format(endOfMonth, 'yyyy-MM-dd'));
-        
-      if (alexId) expQuery = expQuery.neq('wallet_id', alexId);
-        
-      const { data: rawExpenses, error: expError } = await expQuery;
 
       if (expError) throw expError;
 
-      // Aggregate expenses by category AND wallet to satisfy the charts
-      const expAgg = {};
+      // Aggregate expenses by category for each wallet
+      const expAggByWallet = {};
       (rawExpenses || []).forEach(exp => {
-        const key = `${exp.category_id}-${exp.wallet_id}`;
-        if (!expAgg[key]) {
-          expAgg[key] = {
+        if (!byWallet[exp.wallet_id]) return; // Skip if wallet is filtered out (like Alex)
+        const key = `${exp.wallet_id}-${exp.category_id}`;
+        if (!expAggByWallet[key]) {
+          expAggByWallet[key] = {
             category_id: exp.category_id,
-            wallet_id: exp.wallet_id,
             categoryName: exp.categories?.name || 'Unknown',
             name: exp.categories?.name || 'Unknown',
             categoryIcon: exp.categories?.icon || '❓',
             icon: exp.categories?.icon || '❓',
-            walletName: exp.wallets?.name || 'Unknown',
             totalAmount: 0,
             value: 0
           };
         }
-        expAgg[key].totalAmount += exp.amount;
-        expAgg[key].value += exp.amount;
-      });
-      const expenses = Object.values(expAgg);
-
-      // 4. Calculate total balance for valid wallets
-      let allIncQuery = supabase.from('income').select('amount, wallet_id').eq('user_id', user.id);
-      let allExpQuery = supabase.from('expenses').select('amount, wallet_id').eq('user_id', user.id);
-      
-      if (alexId) {
-        allIncQuery = allIncQuery.neq('wallet_id', alexId);
-        allExpQuery = allExpQuery.neq('wallet_id', alexId);
-      }
-      
-      const { data: allIncome } = await allIncQuery;
-      const { data: allExpenses } = await allExpQuery;
-      
-      let totalBalance = 0;
-      let totalIncomeAll = 0;
-      let totalExpensesAll = 0;
-      
-      const walletBalances = {};
-      (rawWallets || []).forEach(w => {
-        walletBalances[w.id] = { id: w.id, name: w.name, color: w.color, totalIncome: 0, totalExpenses: 0 };
+        expAggByWallet[key].totalAmount += exp.amount;
+        expAggByWallet[key].value += exp.amount;
       });
 
+      Object.keys(byWallet).forEach(wId => {
+          byWallet[wId].expenses = Object.keys(expAggByWallet)
+             .filter(k => k.startsWith(`${wId}-`))
+             .map(k => expAggByWallet[k])
+             .sort((a, b) => b.value - a.value); // Sort biggest expenses first
+      });
+
+      // 4. Calculate total balance for wallets
+      const { data: allIncome } = await supabase.from('income').select('amount, wallet_id').eq('user_id', user.id);
+      const { data: allExpenses } = await supabase.from('expenses').select('amount, wallet_id').eq('user_id', user.id);
+      
       (allIncome || []).forEach(inc => { 
-        totalBalance += inc.amount; 
-        totalIncomeAll += inc.amount;
-        if (walletBalances[inc.wallet_id]) walletBalances[inc.wallet_id].totalIncome += inc.amount;
+        if (byWallet[inc.wallet_id]) {
+            byWallet[inc.wallet_id].totalIncome += inc.amount;
+        }
       });
       (allExpenses || []).forEach(exp => { 
-        totalBalance -= exp.amount; 
-        totalExpensesAll += exp.amount;
-        if (walletBalances[exp.wallet_id]) walletBalances[exp.wallet_id].totalExpenses += exp.amount;
+        if (byWallet[exp.wallet_id]) {
+            byWallet[exp.wallet_id].totalExpenses += exp.amount;
+        }
       });
 
-      // 5. Trend Data (last 6 months)
-      const trendData = [];
+      // 5. Trend Data (last 6 months) per wallet
       for (let i = 5; i >= 0; i--) {
         const d = subMonths(startOfMonth, i);
         const mStart = new Date(d.getFullYear(), d.getMonth(), 1);
         const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
         
-        let mExpQuery = supabase
+        const { data: mExp } = await supabase
           .from('expenses')
-          .select('amount')
+          .select('amount, wallet_id')
           .eq('user_id', user.id)
           .gte('expense_date', format(mStart, 'yyyy-MM-dd'))
           .lte('expense_date', format(mEnd, 'yyyy-MM-dd'));
           
-        if (alexId) mExpQuery = mExpQuery.neq('wallet_id', alexId);
-          
-        const { data: mExp } = await mExpQuery;
-          
-        const mTotal = (mExp || []).reduce((sum, e) => sum + e.amount, 0);
-        trendData.push({
-          label: format(d, 'MMM'),
-          total: mTotal
+        const mTotalByWallet = {};
+        (mExp || []).forEach(e => {
+            if (byWallet[e.wallet_id]) {
+                mTotalByWallet[e.wallet_id] = (mTotalByWallet[e.wallet_id] || 0) + e.amount;
+            }
+        });
+
+        Object.keys(byWallet).forEach(wId => {
+            byWallet[wId].trendData.push({
+                label: format(d, 'MMM'),
+                total: mTotalByWallet[wId] || 0
+            });
         });
       }
 
-      // 6. 3-Month Averages
+      // 6. 3-Month Averages per wallet
       const threeMonthsAgo = subMonths(startOfMonth, 3);
-      let avgExpQuery = supabase
+      const { data: avgExp } = await supabase
         .from('expenses')
-        .select('amount, category_id, categories(name)')
+        .select('amount, category_id, wallet_id, categories(name)')
         .eq('user_id', user.id)
         .gte('expense_date', format(threeMonthsAgo, 'yyyy-MM-dd'))
         .lt('expense_date', format(startOfMonth, 'yyyy-MM-dd'));
         
-      if (alexId) avgExpQuery = avgExpQuery.neq('wallet_id', alexId);
-        
-      const { data: avgExp } = await avgExpQuery;
-        
-      const avgAgg = {};
+      const avgAggByWallet = {};
       (avgExp || []).forEach(exp => {
-        if (!avgAgg[exp.category_id]) {
-          avgAgg[exp.category_id] = {
-            category_id: exp.category_id,
-            category_name: exp.categories?.name || 'Unknown',
-            amount: 0
-          };
+        if (!byWallet[exp.wallet_id]) return;
+        const key = `${exp.wallet_id}-${exp.category_id}`;
+        if (!avgAggByWallet[key]) {
+            avgAggByWallet[key] = {
+                category_id: exp.category_id,
+                category_name: exp.categories?.name || 'Unknown',
+                amount: 0
+            };
         }
-        avgAgg[exp.category_id].amount += (exp.amount / 3);
+        avgAggByWallet[key].amount += (exp.amount / 3);
       });
-      const averages = Object.values(avgAgg).sort((a, b) => b.amount - a.amount).slice(0, 5);
+      
+      Object.keys(byWallet).forEach(wId => {
+          byWallet[wId].averages = Object.keys(avgAggByWallet)
+              .filter(k => k.startsWith(`${wId}-`))
+              .map(k => avgAggByWallet[k])
+              .sort((a, b) => b.amount - a.amount)
+              .slice(0, 5); // top 5
+      });
 
       setData({
-        expenses,
-        totalBalance,
-        totalIncomeAll,
-        totalExpensesAll,
-        walletBalances: Object.values(walletBalances),
-        trendData,
-        averages
+        walletsData: Object.values(byWallet).sort((a, b) => a.wallet.name.localeCompare(b.wallet.name))
       });
 
     } catch (err) {
