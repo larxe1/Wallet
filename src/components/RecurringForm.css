@@ -103,12 +103,12 @@
 }
 .type-btn.expense-active {
   background: rgba(239, 68, 68, 0.1);
-  color: var(--danger-color);
+  color: var(--accent-danger);
   border-color: rgba(239, 68, 68, 0.3);
 }
 .type-btn.income-active {
   background: rgba(16, 185, 129, 0.1);
-  color: var(--success-color);
+  color: var(--accent-success);
   border-color: rgba(16, 185, 129, 0.3);
 }
 
