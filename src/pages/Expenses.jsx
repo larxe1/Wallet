@@ -6,6 +6,7 @@ import { usePaymentMethods } from '../hooks/usePaymentMethods';
 import ExpenseForm from '../components/ExpenseForm';
 import MonthSelector from '../components/MonthSelector';
 import WalletFilter from '../components/WalletFilter';
+import MultiSelectDropdown from '../components/MultiSelectDropdown';
 import { format, parseISO, addMonths } from 'date-fns';
 import './Expenses.css';
 
@@ -18,7 +19,8 @@ const Expenses = () => {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedWalletId, setSelectedWalletId] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState(new Set());
+  const [selectedPaymentMethodIds, setSelectedPaymentMethodIds] = useState(new Set());
   const [sortOrder, setSortOrder] = useState('date_desc');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
@@ -46,8 +48,9 @@ const Expenses = () => {
   
   let filteredExpenses = expenses.filter(e => {
     const matchWallet = !selectedWalletId || e.wallet_id === selectedWalletId;
-    const matchCategory = !selectedCategoryId || e.category_id === selectedCategoryId;
-    return matchWallet && matchCategory;
+    const matchCategory = selectedCategoryIds.size === 0 || selectedCategoryIds.has(e.category_id);
+    const matchPaymentMethod = selectedPaymentMethodIds.size === 0 || selectedPaymentMethodIds.has(e.payment_method_id);
+    return matchWallet && matchCategory && matchPaymentMethod;
   });
   
   filteredExpenses.sort((a, b) => {
@@ -68,6 +71,12 @@ const Expenses = () => {
   const getWalletName = (id) => {
     const wallet = wallets.find(w => w.id === id);
     return wallet ? wallet.name : 'Unknown';
+  };
+
+  const getPaymentMethodName = (id) => {
+    if (!id) return '-';
+    const method = paymentMethods.find(p => p.id === id);
+    return method ? method.label : 'Unknown';
   };
   
   return (
@@ -91,16 +100,19 @@ const Expenses = () => {
       <div className="filters-section" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
         <WalletFilter wallets={wallets} selected={selectedWalletId} onChange={setSelectedWalletId} />
         
-        <select 
-          value={selectedCategoryId} 
-          onChange={(e) => setSelectedCategoryId(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
-        >
-          <option value="">All Categories</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-          ))}
-        </select>
+        <MultiSelectDropdown 
+          options={categories.map(c => ({ id: c.id, label: `${c.icon} ${c.name}` }))}
+          selectedIds={selectedCategoryIds}
+          onChange={setSelectedCategoryIds}
+          placeholder="All Categories"
+        />
+
+        <MultiSelectDropdown 
+          options={paymentMethods.map(p => ({ id: p.id, label: p.label }))}
+          selectedIds={selectedPaymentMethodIds}
+          onChange={setSelectedPaymentMethodIds}
+          placeholder="All Payment Methods"
+        />
 
         <select 
           value={sortOrder} 
@@ -124,6 +136,7 @@ const Expenses = () => {
                 <th>Date</th>
                 <th>Description</th>
                 <th>Category</th>
+                <th>Payment Method</th>
                 <th>Wallet</th>
                 <th className="amount-col">Amount</th>
                 <th>Actions</th>
@@ -135,6 +148,7 @@ const Expenses = () => {
                   <td>{format(new Date(expense.expense_date), 'MMM dd, yyyy')}</td>
                   <td>{expense.description}</td>
                   <td>{getCategoryName(expense.category_id)}</td>
+                  <td>{getPaymentMethodName(expense.payment_method_id)}</td>
                   <td>{getWalletName(expense.wallet_id)}</td>
                   <td className="amount-col expense-amount">{formatCurrency(expense.amount)}</td>
                   <td className="actions-col">
@@ -146,7 +160,7 @@ const Expenses = () => {
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan="4" className="total-label">Total</td>
+                <td colSpan="5" className="total-label">Total</td>
                 <td className="amount-col expense-amount total-amount">{formatCurrency(totalAmount)}</td>
                 <td></td>
               </tr>
