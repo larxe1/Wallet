@@ -1,0 +1,111 @@
+.calendar-container {
+  background: var(--bg-card, rgba(30, 41, 59, 0.8));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.1));
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+}
+
+.calendar-header {
+  margin-bottom: 24px;
+}
+
+.calendar-title {
+  margin: 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  text-transform: uppercase;
+  padding-bottom: 8px;
+}
+
+.calendar-day {
+  background: rgba(15, 23, 42, 0.3);
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.05));
+  border-radius: 12px;
+  min-height: 80px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-day:hover {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.calendar-day.dimmed {
+  opacity: 0.4;
+}
+
+.calendar-day.today {
+  border: 1px solid var(--accent-primary, #6366f1);
+}
+
+.calendar-day.selected {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid var(--accent-primary, #6366f1);
+}
+
+.day-number {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary, #f1f5f9);
+  align-self: flex-end;
+}
+
+.day-indicators {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.indicator {
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.income-indicator {
+  background-color: rgba(16, 185, 129, var(--indicator-opacity, 0.5));
+  color: #fff;
+}
+
+.expense-indicator {
+  background-color: rgba(244, 63, 94, var(--indicator-opacity, 0.5));
+  color: #fff;
+}
+
+.indicator-amount {
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,17 @@
+.income-container {
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+/* Inherits table styles from Expenses.css usually via global or duplicate if scoped */
+.add-btn.income-btn {
+  background: var(--accent-success);
+}
+
+.add-btn.income-btn:hover {
+  background: #059669;
+}
+
+.income-amount {
+  color: var(--accent-success);
+}

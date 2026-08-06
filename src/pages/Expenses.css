@@ -1,0 +1,121 @@
+.expenses-container {
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.add-btn {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background: #4f46e5;
+}
+
+.filters-section {
+  margin-bottom: 24px;
+}
+
+.data-table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+  background: rgba(15, 23, 42, 0.4);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.amount-col {
+  text-align: right !important;
+  font-family: var(--font-mono);
+}
+
+.expense-amount {
+  color: var(--accent-danger);
+}
+
+.actions-col {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.action-btn.edit:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.action-btn.delete:hover {
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--accent-danger);
+}
+
+.empty-state {
+  padding: 48px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.total-label {
+  text-align: right !important;
+  font-weight: 600;
+}
+
+.total-amount {
+  font-weight: 700;
+}
+
+.data-table tfoot th,
+.data-table tfoot td {
+  background: rgba(15, 23, 42, 0.6);
+  border-top: 2px solid var(--border-color);
+}

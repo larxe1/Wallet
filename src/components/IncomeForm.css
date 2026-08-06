@@ -1,0 +1,22 @@
+/* Reuse styles from ExpenseForm with income specifics */
+@import './ExpenseForm.css';
+
+.income-amount-group:focus-within {
+  border-color: var(--accent-success);
+}
+
+.income-amount-input {
+  color: var(--accent-success) !important;
+}
+
+.income-amount-input::placeholder {
+  color: rgba(16, 185, 129, 0.5);
+}
+
+.btn-income-save {
+  background: var(--accent-success);
+}
+
+.btn-income-save:hover {
+  background: #059669;
+}

@@ -1,0 +1,47 @@
+.trend-chart-container {
+  background: var(--bg-card, rgba(30, 41, 59, 0.8));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.1));
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+}
+
+.trend-chart-title {
+  margin: 0 0 24px 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.trend-chart-wrapper {
+  height: 300px;
+  width: 100%;
+}
+
+.trend-tooltip {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.2));
+  backdrop-filter: blur(8px);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+.trend-tooltip-label {
+  margin: 0 0 4px 0;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.trend-tooltip-value {
+  margin: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary, #f1f5f9);
+}
