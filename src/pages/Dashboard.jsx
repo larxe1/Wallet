@@ -19,6 +19,10 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [excludedCategoryIds, setExcludedCategoryIds] = useState(new Set());
   
+  // Track which tab is active for each wallet
+  // e.g., { 'wallet-uuid': 'overview' }
+  const [activeTabs, setActiveTabs] = useState({});
+  
   const { fetchDashboardData, data: dashboardData, loading, error } = useDashboard();
   const { categories } = useCategories();
   
@@ -34,6 +38,10 @@ const Dashboard = () => {
       newExcluded.add(id);
     }
     setExcludedCategoryIds(newExcluded);
+  };
+  
+  const setTabForWallet = (walletId, tab) => {
+    setActiveTabs(prev => ({ ...prev, [walletId]: tab }));
   };
   
   if (error) {
@@ -64,13 +72,16 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-main dashboard-separated">
           {dashboardData.walletsData.map(walletData => {
+            const walletId = walletData.wallet.id;
+            const activeTab = activeTabs[walletId] || 'overview'; // default to overview
+            
             // Apply category exclusions to expenses for this specific wallet
             const filteredExpenses = walletData.expenses.filter(e => 
               !excludedCategoryIds.has(e.category_id)
             );
             
             return (
-              <div key={walletData.wallet.id} className="wallet-section">
+              <div key={walletId} className="wallet-section">
                 <div className="wallet-section-header" style={{ borderBottom: `3px solid ${walletData.wallet.color}` }}>
                   <h2>{walletData.wallet.name} Overview</h2>
                 </div>
@@ -84,48 +95,81 @@ const Dashboard = () => {
                   />
                 </div>
                 
-                <section className="chart-section full-width">
-                  <h3>Spending Overview</h3>
-                  <SpendingChart data={filteredExpenses} />
-                </section>
-                
-                <div className="chart-row">
-                  <section className="chart-section half-width">
-                    <h3>6-Month Trend</h3>
-                    <TrendChart data={walletData.trendData} />
-                  </section>
-                  
-                  <section className="chart-section half-width">
-                    <h3>Expenses by Category</h3>
-                    <CategoryPieChart data={filteredExpenses} categories={categories} />
-                  </section>
-                </div>
-                
-                <section className="averages-section">
-                  <h3>3-Month Averages</h3>
-                  <div className="table-responsive">
-                    <table className="averages-table">
-                      <thead>
-                        <tr>
-                          <th>Category</th>
-                          <th>Average</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {walletData.averages.length === 0 ? (
-                          <tr><td colSpan="2" className="empty-row">No data for last 3 months</td></tr>
-                        ) : (
-                          walletData.averages.map(avg => (
-                            <tr key={avg.category_id}>
-                              <td>{avg.category_name}</td>
-                              <td>{formatCurrency(avg.amount)}</td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                <div className="wallet-tabs-container">
+                  <div className="wallet-tabs-header">
+                    <button 
+                      className={`wallet-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+                      onClick={() => setTabForWallet(walletId, 'overview')}
+                    >
+                      Spending Overview
+                    </button>
+                    <button 
+                      className={`wallet-tab-btn ${activeTab === 'trend' ? 'active' : ''}`}
+                      onClick={() => setTabForWallet(walletId, 'trend')}
+                    >
+                      6-Month Trend
+                    </button>
+                    <button 
+                      className={`wallet-tab-btn ${activeTab === 'category' ? 'active' : ''}`}
+                      onClick={() => setTabForWallet(walletId, 'category')}
+                    >
+                      By Category
+                    </button>
+                    <button 
+                      className={`wallet-tab-btn ${activeTab === 'averages' ? 'active' : ''}`}
+                      onClick={() => setTabForWallet(walletId, 'averages')}
+                    >
+                      3M Averages
+                    </button>
                   </div>
-                </section>
+                  
+                  <div className="wallet-tab-content chart-section">
+                    {activeTab === 'overview' && (
+                      <div className="tab-pane fade-in">
+                        <SpendingChart data={filteredExpenses} />
+                      </div>
+                    )}
+                    
+                    {activeTab === 'trend' && (
+                      <div className="tab-pane fade-in">
+                        <TrendChart data={walletData.trendData} />
+                      </div>
+                    )}
+                    
+                    {activeTab === 'category' && (
+                      <div className="tab-pane fade-in">
+                        <CategoryPieChart data={filteredExpenses} categories={categories} />
+                      </div>
+                    )}
+                    
+                    {activeTab === 'averages' && (
+                      <div className="tab-pane fade-in averages-section-tab">
+                        <div className="table-responsive">
+                          <table className="averages-table">
+                            <thead>
+                              <tr>
+                                <th>Category</th>
+                                <th>Average</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {walletData.averages.length === 0 ? (
+                                <tr><td colSpan="2" className="empty-row">No data for last 3 months</td></tr>
+                              ) : (
+                                walletData.averages.map(avg => (
+                                  <tr key={avg.category_id}>
+                                    <td>{avg.category_name}</td>
+                                    <td>{formatCurrency(avg.amount)}</td>
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             );
           })}
