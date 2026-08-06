@@ -157,3 +157,14 @@
   background: rgba(255, 77, 77, 0.2);
 }
 
+@media (max-width: 900px) {
+  .calendar-layout {
+    flex-direction: column;
+  }
+  
+  .calendar-details-panel {
+    width: 100%;
+    position: static;
+  }
+}
+
