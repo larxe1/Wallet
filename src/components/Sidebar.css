@@ -121,31 +121,32 @@
   position: fixed;
   top: 16px;
   left: 16px;
-  z-index: 101;
+  z-index: 10001;
   background-color: var(--bg-secondary, #1e293b);
   color: var(--text-primary, #f1f5f9);
-  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.1));
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.2));
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-size: 20px;
   cursor: pointer;
+  line-height: 1;
 }
 
 .sidebar-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 99;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9998;
+  /* No backdrop-filter blur here — it was blurring the main content */
 }
 
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
+    z-index: 9999;
   }
 
   .sidebar.open {
@@ -155,8 +156,5 @@
   .mobile-toggle {
     display: block;
   }
-
-  .sidebar-overlay {
-    display: block;
-  }
+  /* .sidebar-overlay display is controlled purely by React JSX conditional rendering */
 }
