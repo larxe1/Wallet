@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import InlineCalculator from './InlineCalculator';
 import './IncomeForm.css';
 
 const IncomeForm = ({ isOpen, onClose, onSave, income, wallets = [] }) => {
@@ -7,6 +8,7 @@ const IncomeForm = ({ isOpen, onClose, onSave, income, wallets = [] }) => {
   const [description, setDescription] = useState('');
   const [walletId, setWalletId] = useState('');
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [showCalc, setShowCalc] = useState(false);
 
   useEffect(() => {
     if (income) {
@@ -49,16 +51,32 @@ const IncomeForm = ({ isOpen, onClose, onSave, income, wallets = [] }) => {
         <form onSubmit={handleSubmit} className="income-form">
           <div className="form-group amount-group income-amount-group">
             <span className="currency-symbol">₱</span>
-            <input
-              type="number"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              required
-              className="amount-input income-amount-input"
-              autoFocus
-            />
+            <div className="amount-with-calc" style={{ position: 'relative', flex: 1 }}>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
+                required
+                className="amount-input income-amount-input"
+                autoFocus
+              />
+              <button
+                type="button"
+                className={`calc-toggle-btn ${showCalc ? 'active' : ''}`}
+                onClick={() => setShowCalc(!showCalc)}
+                title="Open calculator"
+              >
+                ⌗
+              </button>
+              {showCalc && (
+                <InlineCalculator
+                  onResult={(val) => { setAmount(val); setShowCalc(false); }}
+                  onClose={() => setShowCalc(false)}
+                />
+              )}
+            </div>
           </div>
 
           <div className="form-group">

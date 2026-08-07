@@ -115,6 +115,18 @@
   color: rgba(244, 63, 94, 0.5);
 }
 
+/* Calculator inside amount group */
+.amount-with-calc {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.amount-with-calc .amount-input {
+  flex: 1;
+  min-width: 0;
+}
+
 .form-row {
   display: flex;
   gap: 16px;
