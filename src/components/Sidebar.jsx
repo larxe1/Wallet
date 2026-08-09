@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ChangelogModal from './ChangelogModal';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -30,7 +32,13 @@ const Sidebar = () => {
         <div className="sidebar-header">
           <div className="logo-container">
             <h1 className="logo-text">Eli Tracker</h1>
-            <span className="app-version">v1.1.0</span>
+            <span 
+              className="app-version" 
+              onClick={() => setIsChangelogOpen(true)}
+              title="Click to view release notes"
+            >
+              v1.1.0
+            </span>
           </div>
         </div>
         
@@ -61,6 +69,11 @@ const Sidebar = () => {
       </aside>
       
       {isOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
+      
+      <ChangelogModal 
+        isOpen={isChangelogOpen} 
+        onClose={() => setIsChangelogOpen(false)} 
+      />
     </>
   );
 };
