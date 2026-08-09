@@ -95,21 +95,26 @@ export const usePaymentMethods = () => {
   };
 
   const updatePaymentMethodOrder = async (orderedIds) => {
+    // Optimistic local update
+    const newOrder = [];
+    orderedIds.forEach(id => {
+      const pm = data.find(p => p.id === id);
+      if (pm) newOrder.push(pm);
+    });
+    setData(newOrder);
+    
     setLoading(true);
     try {
-      // Create an array of updates
-      const updates = orderedIds.map((id, index) => ({
-        id,
-        user_id: user.id,
-        sort_order: index + 1
-      }));
+      // Use Promise.all with individual updates to avoid upsert missing column errors
+      const updatePromises = orderedIds.map((id, index) => 
+        supabase
+          .from('payment_methods')
+          .update({ sort_order: index + 1 })
+          .eq('id', id)
+          .eq('user_id', user.id)
+      );
       
-      // Supabase js upsert
-      const { error: err } = await supabase
-        .from('payment_methods')
-        .upsert(updates, { onConflict: 'id' });
-        
-      if (err) throw err;
+      await Promise.all(updatePromises);
       
       // refetch to ensure correct ordering locally
       await fetchPaymentMethods();
