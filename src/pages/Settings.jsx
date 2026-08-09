@@ -8,9 +8,12 @@ import './Settings.css';
 const Settings = () => {
   const { wallets, addWallet, deleteWallet } = useWallets();
   const { categories, addCategory, deleteCategory } = useCategories();
-  const { paymentMethods, addPaymentMethod, deletePaymentMethod } = usePaymentMethods();
+  const { paymentMethods, addPaymentMethod, deletePaymentMethod, updatePaymentMethodOrder } = usePaymentMethods();
   
   const [showCategoryForm, setShowCategoryForm] = useState(false);
+  
+  // Drag and Drop state
+  const [draggedIdx, setDraggedIdx] = useState(null);
   
   // Wallet state
   const [newWalletName, setNewWalletName] = useState('');
@@ -93,6 +96,28 @@ const Settings = () => {
     alert('Categories seeded and duplicates cleaned up successfully!');
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (e, index) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault(); // Necessary to allow dropping
+  };
+
+  const handleDrop = async (e, targetIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === targetIdx) return;
+    
+    const newItems = [...paymentMethods];
+    const [movedItem] = newItems.splice(draggedIdx, 1);
+    newItems.splice(targetIdx, 0, movedItem);
+    
+    setDraggedIdx(null);
+    await updatePaymentMethodOrder(newItems.map(pm => pm.id));
+  };
+
   return (
     <div className="settings-container">
       <header className="page-header">
@@ -139,9 +164,19 @@ const Settings = () => {
           <h2>Payment Methods</h2>
           <div className="settings-card">
             <div className="list-group">
-              {paymentMethods.map(pm => (
-                <div key={pm.id} className="list-item">
+              {paymentMethods.map((pm, idx) => (
+                <div 
+                  key={pm.id} 
+                  className="list-item"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, idx)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, idx)}
+                  onDragEnd={() => setDraggedIdx(null)}
+                  style={{ cursor: 'grab', opacity: draggedIdx === idx ? 0.5 : 1 }}
+                >
                   <div className="item-info">
+                    <span className="drag-handle" style={{ color: 'var(--text-secondary)', marginRight: '8px', cursor: 'grab' }}>≡</span>
                     <span className={`pm-type-badge ${pm.type}`}>{pm.type}</span>
                     <span>{pm.label}</span>
                   </div>

@@ -94,5 +94,33 @@ export const usePaymentMethods = () => {
     }
   };
 
-  return { data, paymentMethods: data, loading, error, fetchPaymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod };
+  const updatePaymentMethodOrder = async (orderedIds) => {
+    setLoading(true);
+    try {
+      // Create an array of updates
+      const updates = orderedIds.map((id, index) => ({
+        id,
+        user_id: user.id,
+        sort_order: index + 1
+      }));
+      
+      // Supabase js upsert
+      const { error: err } = await supabase
+        .from('payment_methods')
+        .upsert(updates, { onConflict: 'id' });
+        
+      if (err) throw err;
+      
+      // refetch to ensure correct ordering locally
+      await fetchPaymentMethods();
+      return { error: null };
+    } catch (err) {
+      setError(err.message);
+      return { error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { data, paymentMethods: data, loading, error, fetchPaymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, updatePaymentMethodOrder };
 };
