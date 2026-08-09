@@ -30,6 +30,7 @@ const Sidebar = () => {
         <div className="sidebar-header">
           <div className="logo-container">
             <h1 className="logo-text">Eli Tracker</h1>
+            <span className="app-version">v1.1.0</span>
           </div>
         </div>
         
