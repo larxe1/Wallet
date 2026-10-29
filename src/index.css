@@ -1,32 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Design Tokens */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: rgba(30, 41, 59, 0.8);
+  /* Design Tokens - deep forest green "financial" theme */
+  --bg-primary: #04140f;
+  --bg-secondary: #0a2119;
+  --bg-tertiary: #133428;
+  --bg-card: rgba(11, 38, 29, 0.88);
   
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #eef6f1;
+  --text-secondary: #9bb8a9;
+  --text-muted: #688676;
+  --text-on-accent: #03130d;
   
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #818cf8;
-  --accent-success: #10b981;
-  --accent-success-hover: #34d399;
-  --accent-danger: #f43f5e;
-  --accent-danger-hover: #fb7185;
-  --accent-warning: #f59e0b;
+  --accent-primary: #1fc77a;
+  --accent-primary-hover: #3ddc92;
+  --accent-primary-rgb: 31, 199, 122;
+  --accent-success: #34d399;
+  --accent-success-hover: #6ee7b7;
+  --accent-danger: #ef5b6b;
+  --accent-danger-hover: #f58491;
+  --accent-warning: #e6b04b;
   
-  --border-color: rgba(148, 163, 184, 0.1);
-  --border-color-hover: rgba(148, 163, 184, 0.2);
+  --border-color: rgba(120, 190, 150, 0.14);
+  --border-color-hover: rgba(120, 190, 150, 0.28);
   
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 10px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -1px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 14px 24px -4px rgba(0, 0, 0, 0.45), 0 6px 8px -2px rgba(0, 0, 0, 0.3);
   
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
@@ -35,6 +37,7 @@
   --transition-normal: 250ms ease;
   
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -57,6 +60,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
   overflow-x: hidden;
+}
+
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -112,13 +121,14 @@ button {
 
 .btn-primary {
   background-color: var(--accent-primary);
-  color: #fff;
+  color: var(--text-on-accent);
+  font-weight: 600;
 }
 .btn-primary:hover:not(:disabled) { background-color: var(--accent-primary-hover); }
 
 .btn-success {
   background-color: var(--accent-success);
-  color: #fff;
+  color: var(--text-on-accent);
 }
 .btn-success:hover:not(:disabled) { background-color: var(--accent-success-hover); }
 
@@ -176,15 +186,15 @@ button {
   letter-spacing: 0.05em;
 }
 
-.badge-credit { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-success); border: 1px solid rgba(16, 185, 129, 0.2); }
-.badge-debit { background-color: rgba(244, 63, 94, 0.1); color: var(--accent-danger); border: 1px solid rgba(244, 63, 94, 0.2); }
-.badge-cash { background-color: rgba(245, 158, 11, 0.1); color: var(--accent-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+.badge-credit { background-color: rgba(52, 211, 153, 0.1); color: var(--accent-success); border: 1px solid rgba(52, 211, 153, 0.22); }
+.badge-debit { background-color: rgba(239, 91, 107, 0.1); color: var(--accent-danger); border: 1px solid rgba(239, 91, 107, 0.22); }
+.badge-cash { background-color: rgba(230, 176, 75, 0.1); color: var(--accent-warning); border: 1px solid rgba(230, 176, 75, 0.22); }
 
 /* Modals */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(15, 23, 42, 0.8);
+  background-color: rgba(2, 12, 8, 0.8);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;

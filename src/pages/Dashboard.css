@@ -14,6 +14,7 @@
 .dashboard-header h1 {
   margin: 0;
   font-size: 1.75rem;
+  font-family: var(--font-display);
 }
 
 .header-controls {
@@ -51,7 +52,7 @@
 
 .timeframe-toggle button.active {
   background: var(--accent-primary);
-  color: white;
+  color: var(--text-on-accent);
 }
 
 @media (max-width: 768px) {
@@ -69,7 +70,7 @@
 }
 
 .privacy-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(120, 190, 150, 0.1) !important;
   color: var(--text-primary) !important;
 }
 
@@ -135,6 +136,7 @@
   margin: 0;
   font-size: 1.5rem;
   color: var(--text-primary);
+  font-family: var(--font-display);
 }
 
 .chart-section {
@@ -188,7 +190,7 @@
 
 .wallet-tab-btn:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(120, 190, 150, 0.05);
 }
 
 .wallet-tab-btn.active {

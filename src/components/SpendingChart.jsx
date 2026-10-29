@@ -2,7 +2,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import './SpendingChart.css';
 
-const COLORS = ['#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+const COLORS = ['#1fc77a', '#34d399', '#ef5b6b', '#e6b04b', '#5eb8a0', '#4fa3c7', '#c08ad6', '#a3c94a'];
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
@@ -38,17 +38,17 @@ export default function SpendingChart({ data = [], title = 'Spending by Category
               tickFormatter={(val) => `₱${val > 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'JetBrains Mono' }}
+              tick={{ fill: '#9bb8a9', fontSize: 12, fontFamily: 'JetBrains Mono' }}
             />
             <YAxis 
               type="category" 
               dataKey="categoryName" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#f1f5f9', fontSize: 14, fontFamily: 'Inter' }}
+              tick={{ fill: '#eef6f1', fontSize: 14, fontFamily: 'Inter' }}
               width={100}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 190, 150, 0.1)' }} />
             <Bar 
               dataKey="totalAmount" 
               radius={[0, 4, 4, 0]}

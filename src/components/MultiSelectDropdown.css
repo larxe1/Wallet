@@ -20,7 +20,7 @@
 }
 
 .multi-select-btn:hover {
-  border-color: rgba(148, 163, 184, 0.5);
+  border-color: rgba(120, 190, 150, 0.5);
 }
 
 .multi-select-btn.active {
@@ -67,7 +67,7 @@
 }
 
 .multi-select-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(120, 190, 150, 0.05);
 }
 
 .multi-select-item input[type="checkbox"] {

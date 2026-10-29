@@ -186,7 +186,7 @@ const Calendar = () => {
                     <span className="tx-icon">{exp.isProjected ? '🔄' : (exp.categories?.icon || '💸')}</span>
                     <span className="tx-desc">
                       {exp.description || exp.categories?.name || 'Expense'}
-                      {exp.isProjected && <span style={{fontSize: '0.7em', color: '#888', marginLeft: '6px'}}>(Recurring)</span>}
+                      {exp.isProjected && <span style={{fontSize: '0.7em', color: 'var(--text-muted)', marginLeft: '6px'}}>(Recurring)</span>}
                     </span>
                   </div>
                   <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>

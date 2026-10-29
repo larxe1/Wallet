@@ -48,7 +48,7 @@ const Dashboard = () => {
   
   if (error) {
     return (
-      <div className="dashboard-loading" style={{color: 'red'}}>
+      <div className="dashboard-loading" style={{color: 'var(--accent-danger)'}}>
         Error loading dashboard: {error}
       </div>
     );

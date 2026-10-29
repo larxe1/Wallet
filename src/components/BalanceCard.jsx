@@ -5,7 +5,7 @@ const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
 };
 
-export default function BalanceCard({ walletName, walletColor = '#6366f1', totalIncome = 0, totalExpenses = 0, isPrivacyMode = false }) {
+export default function BalanceCard({ walletName, walletColor = '#1fc77a', totalIncome = 0, totalExpenses = 0, isPrivacyMode = false }) {
   const balance = totalIncome - totalExpenses;
   const isPositive = balance >= 0;
   

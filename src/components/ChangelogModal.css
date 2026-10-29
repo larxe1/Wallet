@@ -34,7 +34,7 @@
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(120, 190, 150, 0.1);
   color: var(--text-primary);
 }
 
@@ -47,7 +47,7 @@
 }
 
 .changelog-item {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid rgba(120, 190, 150, 0.1);
   padding-bottom: 24px;
 }
 
@@ -66,7 +66,7 @@
 .release-version {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--accent-primary, #6366f1);
+  color: var(--accent-primary, #1fc77a);
   font-family: var(--font-mono);
 }
 

@@ -53,7 +53,7 @@
 }
 
 .month-name:hover, .year-name:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(120, 190, 150, 0.1);
 }
 
 .dropdown-menu {
@@ -95,7 +95,7 @@
 
 .dropdown-item.active {
   background: var(--accent-primary);
-  color: white;
+  color: var(--text-on-accent);
   font-weight: bold;
 }
 

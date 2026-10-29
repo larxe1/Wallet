@@ -17,7 +17,7 @@ const Settings = () => {
   
   // Wallet state
   const [newWalletName, setNewWalletName] = useState('');
-  const [newWalletColor, setNewWalletColor] = useState('#6366f1');
+  const [newWalletColor, setNewWalletColor] = useState('#1fc77a');
   
   // Payment Method state
   const [pmType, setPmType] = useState('credit');
@@ -230,7 +230,7 @@ const Settings = () => {
           <h2>Categories</h2>
           <div style={{display: 'flex', gap: '8px'}}>
             <button className="add-btn small" onClick={() => setShowCategoryForm(true)}>+ Category</button>
-            <button className="add-btn small" style={{backgroundColor: '#10b981'}} onClick={handleSeedCategories}>+ Seed Defaults</button>
+            <button className="add-btn small" style={{backgroundColor: '#34d399', color: '#03130d'}} onClick={handleSeedCategories}>+ Seed Defaults</button>
           </div>
         </div>
           <div className="settings-card categories-grid">

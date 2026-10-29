@@ -13,6 +13,7 @@
 .page-header h1 {
   margin: 0;
   font-size: 1.75rem;
+  font-family: var(--font-display);
 }
 
 .header-actions {
@@ -23,7 +24,7 @@
 
 .add-btn {
   background: var(--accent-primary);
-  color: white;
+  color: var(--text-on-accent);
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -33,7 +34,7 @@
 }
 
 .add-btn:hover {
-  background: #4f46e5;
+  background: #17a566;
 }
 
 .filters-section {
@@ -62,7 +63,7 @@
 }
 
 .data-table th {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(4, 20, 15, 0.4);
   color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.9rem;
@@ -92,11 +93,11 @@
 }
 
 .action-btn.edit:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(120, 190, 150, 0.1);
 }
 
 .action-btn.delete:hover {
-  background: rgba(244, 63, 94, 0.2);
+  background: rgba(239, 91, 107, 0.2);
   color: var(--accent-danger);
 }
 
@@ -117,6 +118,6 @@
 
 .data-table tfoot th,
 .data-table tfoot td {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(4, 20, 15, 0.6);
   border-top: 2px solid var(--border-color);
 }

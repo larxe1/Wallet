@@ -6,10 +6,11 @@
 /* Inherits table styles from Expenses.css usually via global or duplicate if scoped */
 .add-btn.income-btn {
   background: var(--accent-success);
+  color: var(--text-on-accent);
 }
 
 .add-btn.income-btn:hover {
-  background: #059669;
+  background: #1fa876;
 }
 
 .income-amount {

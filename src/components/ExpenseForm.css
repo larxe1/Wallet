@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(15, 23, 42, 0.7);
+  background-color: rgba(4, 20, 15, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -112,7 +112,7 @@
 }
 
 .amount-input::placeholder {
-  color: rgba(244, 63, 94, 0.5);
+  color: rgba(239, 91, 107, 0.5);
 }
 
 /* Calculator inside amount group */
@@ -162,7 +162,7 @@
 .btn-save {
   background: var(--accent-primary);
   border: none;
-  color: white;
+  color: var(--text-on-accent);
   padding: 10px 24px;
   border-radius: 8px;
   cursor: pointer;
@@ -171,5 +171,5 @@
 }
 
 .btn-save:hover {
-  background: #4f46e5;
+  background: #17a566;
 }

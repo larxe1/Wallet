@@ -65,7 +65,7 @@
 
 .cat-chip.included {
   border-color: var(--accent-primary);
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(31, 199, 122, 0.1);
   color: var(--text-primary);
 }
 

@@ -30,34 +30,34 @@ export default function TrendChart({ data = [], title = 'Spending Trend' }) {
           >
             <defs>
               <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#1fc77a" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#1fc77a" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.1)" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(120, 190, 150, 0.12)" />
             <XAxis 
               dataKey="label" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'Inter' }}
+              tick={{ fill: '#9bb8a9', fontSize: 12, fontFamily: 'Inter' }}
               dy={10}
             />
             <YAxis 
               axisLine={false}
               tickLine={false}
               tickFormatter={(val) => `₱${val > 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
-              tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'JetBrains Mono' }}
+              tick={{ fill: '#9bb8a9', fontSize: 12, fontFamily: 'JetBrains Mono' }}
               dx={-10}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area 
               type="monotone" 
               dataKey="total" 
-              stroke="#6366f1" 
+              stroke="#1fc77a" 
               strokeWidth={3}
               fillOpacity={1} 
               fill="url(#colorTotal)" 
-              activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: '#1fc77a', stroke: '#04140f', strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

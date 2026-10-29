@@ -13,6 +13,7 @@
   font-size: 1.25rem;
   margin-top: 0;
   margin-bottom: 16px;
+  font-family: var(--font-display);
 }
 
 .section-header {
@@ -24,6 +25,7 @@
 
 .section-header h2 {
   margin: 0;
+  font-family: var(--font-display);
 }
 
 .settings-card {
@@ -68,7 +70,7 @@
   text-transform: uppercase;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(120, 190, 150, 0.1);
 }
 
 .add-inline {
@@ -115,7 +117,7 @@
 }
 
 .category-item {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(4, 20, 15, 0.5);
   border: 1px solid var(--border-color);
   padding: 12px;
   border-radius: 8px;

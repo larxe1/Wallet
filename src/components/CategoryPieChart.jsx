@@ -2,7 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './CategoryPieChart.css';
 
-const COLORS = ['#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+const COLORS = ['#1fc77a', '#34d399', '#ef5b6b', '#e6b04b', '#5eb8a0', '#4fa3c7', '#c08ad6', '#a3c94a'];
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
@@ -87,7 +87,7 @@ export default function CategoryPieChart({ data = [], title = 'Category Breakdow
               verticalAlign="bottom" 
               height={36}
               iconType="circle"
-              wrapperStyle={{ fontSize: '12px', fontFamily: 'Inter', color: '#94a3b8' }}
+              wrapperStyle={{ fontSize: '12px', fontFamily: 'Inter', color: '#9bb8a9' }}
             />
           </PieChart>
         </ResponsiveContainer>

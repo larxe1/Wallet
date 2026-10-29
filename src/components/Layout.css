@@ -1,8 +1,8 @@
 .app-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-primary, #0f172a);
-  color: var(--text-primary, #f1f5f9);
+  background-color: var(--bg-primary, #04140f);
+  color: var(--text-primary, #eef6f1);
 }
 
 .main-content {
