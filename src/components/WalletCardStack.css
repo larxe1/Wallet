@@ -1,0 +1,79 @@
+.wallet-stack-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wallet-stack-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wallet-stack-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-stack-heading {
+  margin: 0;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #eef6f1);
+}
+
+.wallet-stack-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 999px;
+  background: var(--bg-surface, #121E1B);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+}
+
+.wallet-cycle-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #9bb8a9);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.wallet-cycle-btn:hover {
+  background: var(--bg-surface-muted, #1D2E2A);
+  color: var(--text-primary, #eef6f1);
+}
+
+.wallet-cycle-btn:focus-visible {
+  outline: 2px solid #28C991;
+  outline-offset: 1px;
+}
+
+.wallet-cycle-index {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted, #768E85);
+  padding: 0 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.wallet-stack-deck {
+  position: relative;
+  width: 100%;
+  transition: height 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wallet-deck-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}

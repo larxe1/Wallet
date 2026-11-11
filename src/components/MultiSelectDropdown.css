@@ -1,7 +1,7 @@
 .multi-select-container {
   position: relative;
   display: inline-block;
-  min-width: 160px;
+  min-width: 176px;
 }
 
 .multi-select-btn {
@@ -9,80 +9,197 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 0.9rem;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  background: var(--bg-surface, #121E1B);
+  color: var(--text-secondary, #98B3AA);
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.multi-select-btn.has-selection {
+  color: var(--text-primary, #EEF6F1);
+  border-color: rgba(40, 201, 145, 0.3);
 }
 
 .multi-select-btn:hover {
-  border-color: rgba(120, 190, 150, 0.5);
+  border-color: var(--border-glass, rgba(255, 255, 255, 0.16));
+  background: var(--bg-surface-elevated, #172622);
+  color: var(--text-primary, #EEF6F1);
 }
 
 .multi-select-btn.active {
-  border-color: var(--accent-primary);
+  border-color: var(--border-active, rgba(40, 201, 145, 0.55));
+  background: var(--bg-surface-elevated, #172622);
+  color: var(--text-primary, #EEF6F1);
+}
+
+.multi-select-btn:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 2px;
 }
 
 .truncate {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 130px;
+  max-width: 150px;
+}
+
+.multi-select-btn-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.multi-select-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(40, 201, 145, 0.16);
+  color: var(--accent-emerald, #28C991);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .dropdown-arrow {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  margin-left: 8px;
+  color: var(--text-muted, #5F7A72);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.18s ease;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+  color: var(--accent-emerald, #28C991);
 }
 
 .multi-select-menu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   left: 0;
   width: max-content;
   min-width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  z-index: 50;
+  max-width: 280px;
+  background: var(--bg-glass, rgba(18, 32, 28, 0.88));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.14));
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 60;
+  overflow: hidden;
+}
+
+.multi-select-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #5F7A72);
+}
+
+.multi-select-clear {
+  background: transparent;
+  border: none;
+  color: var(--accent-emerald, #28C991);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.multi-select-clear:hover {
+  background: rgba(40, 201, 145, 0.12);
+}
+
+.multi-select-clear:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 1px;
+}
+
+.multi-select-options {
   max-height: 250px;
   overflow-y: auto;
-  padding: 8px 0;
-  backdrop-filter: blur(16px);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .multi-select-item {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  transition: background 0.2s;
+  text-align: left;
+  transition: background-color 0.15s ease;
 }
 
 .multi-select-item:hover {
-  background: rgba(120, 190, 150, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.multi-select-item input[type="checkbox"] {
-  cursor: pointer;
-  accent-color: var(--accent-primary);
+.multi-select-item.selected {
+  background: rgba(40, 201, 145, 0.1);
+}
+
+.multi-select-item:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: -2px;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-glass, rgba(255, 255, 255, 0.2));
+  background: var(--bg-surface, #121E1B);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-on-accent, #03130D);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.custom-checkbox.checked {
+  background: var(--accent-emerald, #28C991);
+  border-color: var(--accent-emerald, #28C991);
 }
 
 .item-label {
-  font-size: 0.9rem;
-  color: var(--text-primary);
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary, #EEF6F1);
+  white-space: nowrap;
 }
 
 .multi-select-empty {
-  padding: 8px 12px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  padding: 14px 12px;
+  color: var(--text-muted, #5F7A72);
+  font-size: 0.8125rem;
   text-align: center;
 }

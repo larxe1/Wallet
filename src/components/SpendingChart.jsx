@@ -1,66 +1,118 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { motion, useReducedMotion } from 'motion/react';
+import { Tag, BarChart2, RotateCcw } from 'lucide-react';
+import { formatCurrency } from '../utils/format';
 import './SpendingChart.css';
 
-const COLORS = ['#1fc77a', '#34d399', '#ef5b6b', '#e6b04b', '#5eb8a0', '#4fa3c7', '#c08ad6', '#a3c94a'];
+const BAR_PALETTES = [
+  'linear-gradient(90deg, #6856E8 0%, #9686FC 100%)',
+  'linear-gradient(90deg, #17A376 0%, #35D49A 100%)',
+  'linear-gradient(90deg, #9AC836 0%, #C8F865 100%)',
+  'linear-gradient(90deg, #0EA5E9 0%, #38BDF8 100%)',
+  'linear-gradient(90deg, #D97706 0%, #F0B44A 100%)',
+  'linear-gradient(90deg, #DC2626 0%, #F06478 100%)',
+];
 
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
-};
+const DOT_COLORS = ['#8E7CF8', '#28C991', '#C8F865', '#38BDF8', '#F0B44A', '#F06478'];
 
-const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
+export default function SpendingChart({
+  data = [],
+  isPrivacyMode = false,
+  hasActiveFilter = false,
+  onResetFilter,
+}) {
+  const shouldReduceMotion = useReducedMotion();
+
+  if (!data || data.length === 0) {
     return (
-      <div className="chart-tooltip">
-        <p className="tooltip-title">{data.categoryIcon} {data.categoryName}</p>
-        <p className="tooltip-value">{formatCurrency(data.totalAmount)}</p>
-        {data.walletName && <p className="tooltip-wallet">Wallet: {data.walletName}</p>}
+      <div className="spending-chart-empty">
+        <BarChart2 size={28} strokeWidth={1.6} />
+        <p className="spending-empty-text">
+          {hasActiveFilter
+            ? 'All matching categories are currently filtered out.'
+            : 'No category spending recorded for this period.'}
+        </p>
+        {hasActiveFilter && onResetFilter && (
+          <button
+            type="button"
+            className="spending-reset-btn"
+            onClick={onResetFilter}
+          >
+            <RotateCcw size={13} />
+            <span>Show all categories</span>
+          </button>
+        )}
       </div>
     );
   }
-  return null;
-};
 
-export default function SpendingChart({ data = [], title = 'Spending by Category' }) {
+  const totalSpend = data.reduce(
+    (sum, item) => sum + (Number(item.totalAmount ?? item.value) || 0),
+    0
+  );
+  const maxSpend = Math.max(
+    ...data.map((item) => Number(item.totalAmount ?? item.value) || 0),
+    1
+  );
+
   return (
-    <div className="spending-chart-container">
-      <h3 className="chart-title">{title}</h3>
-      <div className="chart-wrapper">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={data}
-            layout="vertical"
-            margin={{ top: 10, right: 30, left: 40, bottom: 0 }}
-          >
-            <XAxis 
-              type="number" 
-              tickFormatter={(val) => `₱${val > 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#9bb8a9', fontSize: 12, fontFamily: 'JetBrains Mono' }}
-            />
-            <YAxis 
-              type="category" 
-              dataKey="categoryName" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#eef6f1', fontSize: 14, fontFamily: 'Inter' }}
-              width={100}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(120, 190, 150, 0.1)' }} />
-            <Bar 
-              dataKey="totalAmount" 
-              radius={[0, 4, 4, 0]}
-              animationDuration={1500}
+    <div className="spending-bars-list" role="list" aria-label="Spending by category">
+      {data.map((item, idx) => {
+        const amount = Number(item.totalAmount ?? item.value) || 0;
+        const pctOfMax = Math.max(4, (amount / maxSpend) * 100);
+        const sharePct = totalSpend > 0 ? Math.round((amount / totalSpend) * 100) : 0;
+        const label = item.categoryName || item.name || 'Category';
+        const rawIcon = item.categoryIcon || item.icon;
+        const hasValidIcon = rawIcon && rawIcon !== '❓';
+        const barGradient = BAR_PALETTES[idx % BAR_PALETTES.length];
+        const accentColor = DOT_COLORS[idx % DOT_COLORS.length];
+
+        return (
+          <div key={item.category_id || label} className="spending-bar-row" role="listitem">
+            <div
+              className="spending-cat-badge"
+              style={{ borderColor: `${accentColor}33`, background: `${accentColor}14` }}
+              aria-hidden="true"
             >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+              {hasValidIcon ? (
+                <span className="spending-cat-emoji">{rawIcon}</span>
+              ) : (
+                <Tag size={15} style={{ color: accentColor }} />
+              )}
+            </div>
+
+            <div className="spending-bar-body">
+              <div className="spending-bar-meta">
+                <div className="spending-bar-label-group">
+                  <span className="spending-cat-name">{label}</span>
+                  <span className="spending-cat-share">{sharePct}%</span>
+                </div>
+                <span className="spending-cat-amount">
+                  {formatCurrency(amount, { masked: isPrivacyMode })}
+                </span>
+              </div>
+
+              <div className="spending-bar-track" aria-hidden="true">
+                <motion.div
+                  className="spending-bar-fill"
+                  style={{ background: barGradient }}
+                  initial={shouldReduceMotion ? { width: `${pctOfMax}%` } : { width: '0%' }}
+                  animate={{ width: `${pctOfMax}%` }}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0.01 }
+                      : {
+                          duration: 0.55,
+                          delay: Math.min(idx * 0.04, 0.24),
+                          ease: [0.16, 1, 0.3, 1],
+                        }
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

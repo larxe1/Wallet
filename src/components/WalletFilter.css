@@ -1,30 +1,88 @@
 .wallet-filter {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--bg-surface, #121E1B);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+  max-width: 100%;
 }
 
 .wallet-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 16px;
   border-radius: 999px;
-  border: 1px solid var(--border-color);
+  border: 1px solid transparent;
   background: transparent;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: var(--text-secondary, #98B3AA);
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color 0.18s ease, background-color 0.18s ease;
+  white-space: nowrap;
+  user-select: none;
 }
 
-.wallet-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.wallet-pill:hover:not(.active) {
+  color: var(--text-primary, #EEF6F1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.wallet-pill:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 2px;
 }
 
 .wallet-pill.active {
-  color: var(--text-on-accent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: var(--text-on-accent, #03130D);
+  font-weight: 700;
+}
+
+.wallet-pill-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--grad-emerald, linear-gradient(135deg, #35D49A 0%, #17A376 100%));
+  box-shadow: 0 4px 16px rgba(40, 201, 145, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  z-index: 0;
+}
+
+.wallet-pill-content {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wallet-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.22);
+}
+
+.wallet-pill.active .wallet-pill-dot {
+  box-shadow: 0 0 0 1.5px rgba(3, 19, 13, 0.45);
+}
+
+@media (max-width: 640px) {
+  .wallet-filter {
+    border-radius: 16px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+
+  .wallet-filter::-webkit-scrollbar {
+    display: none;
+  }
 }

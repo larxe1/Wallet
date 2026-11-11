@@ -1,4 +1,4 @@
--- WalletWatch Database Migration Script
+-- Money Tracker Database Migration Script
 -- INSTRUCTIONS: Run this entire script in the Supabase SQL Editor.
 -- It will set up all tables, indexes, RLS policies, RPC functions, and automated data seeding for new users.
 

@@ -1,0 +1,175 @@
+/* Toast Stack */
+.feedback-toast-region {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(360px, calc(100vw - 24px));
+  pointer-events: none;
+}
+
+.feedback-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(18, 32, 28, 0.86);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-lg), var(--inner-specular);
+  color: var(--text-primary);
+}
+
+.feedback-toast--success {
+  border-color: rgba(40, 201, 145, 0.34);
+}
+
+.feedback-toast--error {
+  border-color: rgba(240, 100, 120, 0.38);
+}
+
+.feedback-toast--warning {
+  border-color: rgba(240, 180, 74, 0.36);
+}
+
+.feedback-toast--info {
+  border-color: rgba(142, 124, 248, 0.34);
+}
+
+.feedback-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.feedback-toast-icon--success {
+  background: rgba(40, 201, 145, 0.14);
+  color: var(--accent-emerald-bright);
+}
+
+.feedback-toast-icon--error {
+  background: rgba(240, 100, 120, 0.14);
+  color: var(--accent-danger);
+}
+
+.feedback-toast-icon--warning {
+  background: rgba(240, 180, 74, 0.14);
+  color: var(--accent-warning);
+}
+
+.feedback-toast-icon--info {
+  background: rgba(142, 124, 248, 0.14);
+  color: var(--accent-violet);
+}
+
+.feedback-toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-primary);
+  padding-top: 3px;
+}
+
+.feedback-toast-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.feedback-toast-close:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* Native Confirm Dialog */
+.feedback-confirm-dialog {
+  width: min(440px, calc(100vw - 2rem));
+  background: rgba(18, 32, 28, 0.94);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.feedback-confirm-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.feedback-confirm-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.feedback-confirm-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feedback-confirm-badge.is-danger {
+  background: rgba(240, 100, 120, 0.14);
+  border: 1px solid rgba(240, 100, 120, 0.3);
+  color: var(--accent-danger);
+}
+
+.feedback-confirm-badge.is-warning {
+  background: rgba(240, 180, 74, 0.14);
+  border: 1px solid rgba(240, 180, 74, 0.3);
+  color: var(--accent-warning);
+}
+
+.feedback-confirm-badge.is-info {
+  background: rgba(40, 201, 145, 0.14);
+  border: 1px solid rgba(40, 201, 145, 0.3);
+  color: var(--accent-emerald-bright);
+}
+
+.feedback-confirm-copy h2 {
+  font-size: 1.075rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.feedback-confirm-copy p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.feedback-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .feedback-toast-region {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}

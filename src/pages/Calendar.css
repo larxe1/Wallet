@@ -1,171 +1,405 @@
-.calendar-container {
-  padding: 24px;
-  color: var(--text-primary);
-}
-
-.calendar-layout {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-.calendar-main {
-  flex: 1;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  backdrop-filter: blur(16px);
-}
-
-.calendar-details-panel {
-  width: 320px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  backdrop-filter: blur(16px);
-  position: sticky;
-  top: 24px;
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.panel-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-family: var(--font-display);
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: var(--text-primary);
-}
-
-.day-summary {
-  background: rgba(4, 20, 15, 0.5);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-}
-
-.summary-item.total {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-color);
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.amount {
-  font-family: var(--font-mono);
-}
-
-.amount.positive {
-  color: var(--accent-success);
-}
-
-.amount.negative {
-  color: var(--accent-danger);
-}
-
-.panel-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.panel-actions button {
-  flex: 1;
-}
-
-.day-transactions h3 {
-  font-size: 1rem;
-  margin-bottom: 16px;
-  color: var(--text-secondary);
-}
-
-.transaction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.transaction-item:last-child {
-  border-bottom: none;
-}
-
-.tx-details {
+.calendar-page {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  color: var(--text-primary, #F2F7F5);
+  width: 100%;
 }
 
-.tx-desc {
-  font-weight: 500;
+.calendar-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.tx-amount {
-  font-family: var(--font-mono);
+.calendar-page-header h1 {
+  margin: 0;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary, #eef6f1);
 }
 
-.transaction-item.income .tx-amount {
-  color: var(--accent-success);
+.calendar-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.transaction-item.expense .tx-amount {
-  color: var(--accent-danger);
+.calendar-page-filters {
+  background: var(--bg-surface, #121E1B);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.no-data {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 20px 0;
+.calendar-page-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.tx-delete-btn {
-  background: transparent;
-  border: none;
-  color: #ef5b6b;
-  font-weight: bold;
+.cal-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-.tx-delete-btn:hover {
-  background: rgba(239, 91, 107, 0.2);
+  transition: filter 160ms ease, background-color 160ms ease, border-color 160ms ease;
 }
 
-@media (max-width: 900px) {
-  .calendar-layout {
+.cal-action-btn--expense {
+  background: rgba(240, 100, 120, 0.14);
+  border: 1px solid rgba(240, 100, 120, 0.32);
+  color: #ff9ba9;
+}
+
+.cal-action-btn--expense:hover {
+  background: rgba(240, 100, 120, 0.24);
+}
+
+.cal-action-btn--income {
+  background: var(--grad-emerald, linear-gradient(135deg, #35D49A 0%, #17A376 55%, #0E6E52 100%));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #04130D;
+  box-shadow: 0 6px 16px rgba(40, 201, 145, 0.22);
+}
+
+.cal-action-btn--income:hover {
+  filter: brightness(1.08);
+}
+
+.cal-action-btn:focus-visible,
+.cal-drawer-close:focus-visible,
+.cal-drawer-quick-btn:focus-visible,
+.cal-tx-delete:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 2px;
+}
+
+/* Main + Drawer Layout */
+.calendar-page-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.calendar-page-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.calendar-page-drawer {
+  width: 356px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  background: var(--bg-glass, rgba(18, 32, 28, 0.78));
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 18px 40px rgba(0, 0, 0, 0.36);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cal-drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cal-drawer-header h2 {
+  margin: 0;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #eef6f1);
+}
+
+.cal-drawer-weekday {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary, #9bb8a9);
+}
+
+.cal-drawer-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #9bb8a9);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.cal-drawer-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary, #eef6f1);
+}
+
+.cal-drawer-summary {
+  background: rgba(9, 17, 15, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cal-drawer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.86rem;
+  color: var(--text-secondary, #9bb8a9);
+}
+
+.cal-drawer-row--total {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: var(--text-primary, #eef6f1);
+}
+
+.cal-val-income,
+.cal-val-expense {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.cal-val-income {
+  color: var(--accent-emerald, #28C991);
+}
+
+.cal-val-expense {
+  color: var(--accent-danger, #F06478);
+}
+
+.cal-drawer-quick {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cal-drawer-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.cal-drawer-quick-btn--expense {
+  background: rgba(240, 100, 120, 0.12);
+  border: 1px solid rgba(240, 100, 120, 0.25);
+  color: #ff9ba9;
+}
+
+.cal-drawer-quick-btn--expense:hover {
+  background: rgba(240, 100, 120, 0.2);
+}
+
+.cal-drawer-quick-btn--income {
+  background: rgba(40, 201, 145, 0.14);
+  border: 1px solid rgba(40, 201, 145, 0.28);
+  color: var(--accent-emerald, #28C991);
+}
+
+.cal-drawer-quick-btn--income:hover {
+  background: rgba(40, 201, 145, 0.24);
+}
+
+.cal-drawer-tx-section h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #9bb8a9);
+}
+
+.cal-drawer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--text-muted, #688676);
+  font-size: 0.85rem;
+}
+
+.cal-drawer-tx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.cal-drawer-tx {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(9, 17, 15, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cal-drawer-tx.is-projected {
+  border-style: dashed;
+  border-color: rgba(142, 124, 248, 0.3);
+}
+
+.cal-tx-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.cal-tx-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cal-tx-badge--income {
+  background: rgba(40, 201, 145, 0.14);
+  color: var(--accent-emerald, #28C991);
+}
+
+.cal-tx-badge--expense {
+  background: rgba(240, 100, 120, 0.14);
+  color: var(--accent-danger, #F06478);
+}
+
+.cal-tx-cat-emoji {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.cal-tx-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.cal-tx-desc {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-primary, #eef6f1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cal-tx-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-secondary, #9bb8a9);
+}
+
+.cal-projected-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(142, 124, 248, 0.16);
+  color: #b7abff;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.cal-tx-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cal-tx-amount {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.cal-tx-delete {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted, #688676);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.cal-tx-delete:hover {
+  background: rgba(240, 100, 120, 0.16);
+  border-color: rgba(240, 100, 120, 0.3);
+  color: var(--accent-danger, #F06478);
+}
+
+@media (max-width: 1024px) {
+  .calendar-page-layout {
     flex-direction: column;
   }
-  
-  .calendar-details-panel {
+
+  .calendar-page-main {
+    width: 100%;
+  }
+
+  .calendar-page-drawer {
     width: 100%;
     position: static;
   }
 }
-

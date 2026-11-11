@@ -1,47 +1,96 @@
-.trend-chart-container {
-  background: var(--bg-card, rgba(11, 38, 29, 0.8));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color, rgba(120, 190, 150, 0.1));
-  border-radius: 16px;
-  padding: 24px;
+.trend-chart-stage {
+  position: relative;
   width: 100%;
+  height: 256px;
+  user-select: none;
 }
 
-.trend-chart-title {
-  margin: 0 0 24px 0;
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-primary, #eef6f1);
-}
-
-.trend-chart-wrapper {
-  height: 300px;
+.trend-chart-svg {
+  display: block;
   width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.trend-tooltip {
-  background: rgba(4, 20, 15, 0.95);
-  border: 1px solid var(--border-color, rgba(120, 190, 150, 0.2));
-  backdrop-filter: blur(8px);
-  padding: 12px 16px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-}
-
-.trend-tooltip-label {
-  margin: 0 0 4px 0;
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 0.875rem;
+.trend-axis-y {
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 11px;
   font-weight: 500;
-  color: var(--text-secondary, #9bb8a9);
+  fill: var(--text-muted, #768E85);
+  font-variant-numeric: tabular-nums;
 }
 
-.trend-tooltip-value {
-  margin: 0;
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 1.125rem;
+.trend-axis-x {
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 11.5px;
+  font-weight: 500;
+  fill: var(--text-muted, #768E85);
+  transition: fill 160ms ease;
+}
+
+.trend-axis-x.is-active {
+  fill: var(--text-primary, #EEF6F1);
   font-weight: 700;
-  color: var(--text-primary, #eef6f1);
+}
+
+.trend-bar-group {
+  cursor: pointer;
+}
+
+.trend-bar-group:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.trend-bar-group:focus-visible {
+  outline: 2px solid #28C991;
+  outline-offset: 2px;
+}
+
+.trend-bar-group:focus-visible path {
+  stroke: #28C991;
+  stroke-width: 2;
+}
+
+.trend-floating-badge {
+  position: absolute;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(16, 28, 25, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(150, 134, 252, 0.42);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  z-index: 4;
+}
+
+.trend-badge-period {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #b7acff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.trend-badge-amount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #eef6f1;
+  font-variant-numeric: tabular-nums;
+}
+
+.trend-chart-empty {
+  height: 256px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-muted, #768E85);
+  font-size: 0.9rem;
 }

@@ -1,47 +1,85 @@
 .category-filter-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--bg-surface, #121E1B);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+  border-radius: 16px;
   padding: 16px;
-  margin-bottom: 24px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-title-icon {
+  color: var(--accent-emerald, #28C991);
 }
 
 .filter-header h4 {
   margin: 0;
-  color: var(--text-primary);
-  font-weight: 500;
+  color: var(--text-primary, #EEF6F1);
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.filter-count-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-surface-muted, #1D2E2A);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.07));
+  color: var(--text-secondary, #98B3AA);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .quick-actions {
-  display: flex;
-  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
+  border: 1px solid transparent;
+  color: var(--text-secondary, #98B3AA);
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  border-radius: 8px;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
 }
 
 .quick-btn:hover:not(:disabled) {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--bg-surface-elevated, #172622);
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary, #EEF6F1);
+}
+
+.quick-btn:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 2px;
 }
 
 .quick-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
@@ -52,29 +90,71 @@
 }
 
 .cat-chip {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  background: var(--bg-surface-elevated, #172622);
   cursor: pointer;
-  transition: all 0.2s;
+  font-family: var(--font-sans, 'Manrope', system-ui, sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, opacity 0.16s ease;
+}
+
+.cat-chip:focus-visible {
+  outline: 2px solid var(--accent-emerald, #28C991);
+  outline-offset: 2px;
 }
 
 .cat-chip.included {
-  border-color: var(--accent-primary);
-  background: rgba(31, 199, 122, 0.1);
-  color: var(--text-primary);
+  border-color: rgba(40, 201, 145, 0.35);
+  background: rgba(40, 201, 145, 0.11);
+  color: var(--text-primary, #EEF6F1);
+}
+
+.cat-chip.included:hover {
+  border-color: rgba(40, 201, 145, 0.6);
+  background: rgba(40, 201, 145, 0.17);
 }
 
 .cat-chip.excluded {
-  opacity: 0.5;
-  text-decoration: line-through;
-  color: var(--text-secondary);
+  opacity: 0.52;
+  background: var(--bg-surface-elevated, #172622);
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-muted, #5F7A72);
 }
 
-.cat-chip:hover {
-  transform: translateY(-1px);
+.cat-chip.excluded:hover {
+  opacity: 0.82;
+  color: var(--text-secondary, #98B3AA);
+}
+
+.cat-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.cat-name {
+  line-height: 1.2;
+}
+
+.cat-state-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-emerald, #28C991);
+}
+
+.cat-chip.excluded .cat-state-indicator {
+  color: var(--text-muted, #5F7A72);
+}
+
+.category-filter-empty {
+  margin: 0;
+  color: var(--text-muted, #5F7A72);
+  font-size: 0.8125rem;
 }
