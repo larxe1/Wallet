@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="obsidian_bg">#080D11</color>
+    <color name="surface_card">#101820</color>
+    <color name="surface_elevated">#16222C</color>
+    <color name="emerald_primary">#28C991</color>
+    <color name="emerald_dark">#051A13</color>
+    <color name="chartreuse_accent">#C8F865</color>
+    <color name="violet_accent">#8E7CF8</color>
+    <color name="rose_danger">#F06478</color>
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+</resources>

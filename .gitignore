@@ -19,3 +19,15 @@ service-account*.json
 *.secret
 secrets.json
 client_secret*.json
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+*.jks
+*.keystore
+*.apk
+*.aab

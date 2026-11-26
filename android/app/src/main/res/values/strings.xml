@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Money Tracker</string>
+    <string name="widget_name">Wallet Balance &amp; Quick Log</string>
+    <string name="widget_description">Glanceable PHP wallet balance with privacy mask and one-tap quick expense/income logger.</string>
+</resources>

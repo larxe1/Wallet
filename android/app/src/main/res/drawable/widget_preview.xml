@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="140dp"
+    android:viewportWidth="320"
+    android:viewportHeight="140">
+    <!-- Outer obsidian glass card -->
+    <path
+        android:fillColor="#0D161D"
+        android:pathData="M20,0 L300,0 C311.05,0 320,8.95 320,20 L320,120 C320,131.05 311.05,140 300,140 L20,140 C8.95,140 0,131.05 0,120 L0,20 C0,8.95 8.95,0 20,0 Z" />
+    <!-- Top subtle border highlight -->
+    <path
+        android:fillColor="#1E313D"
+        android:pathData="M20,1 L300,1 C310.49,1 319,9.51 319,20 L319,22 C319,11.51 310.49,3 300,3 L20,3 C9.51,3 1,11.51 1,22 L1,20 C1,9.51 9.51,1 20,1 Z" />
+    <!-- Wallet pill chip -->
+    <path
+        android:fillColor="#172731"
+        android:pathData="M24,18 L112,18 C118.63,18 124,23.37 124,30 C124,36.63 118.63,42 112,42 L24,42 C17.37,42 12,36.63 12,30 C12,23.37 17.37,18 24,18 Z" />
+    <!-- Emerald wallet dot -->
+    <path
+        android:fillColor="#28C991"
+        android:pathData="M26,30 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <!-- Masked balance dots bar -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M24,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0
+                          M38,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0
+                          M52,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0
+                          M66,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0
+                          M80,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0
+                          M94,62 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <!-- Privacy eye button pill top right -->
+    <path
+        android:fillColor="#172731"
+        android:pathData="M280,18 L296,18 C302.63,18 308,23.37 308,30 C308,36.63 302.63,42 296,42 L280,42 C273.37,42 268,36.63 268,30 C268,23.37 273.37,18 280,18 Z" />
+    <!-- Quick Log Expense CTA pill -->
+    <path
+        android:fillColor="#28C991"
+        android:pathData="M24,94 L152,94 C159.73,94 166,100.27 166,108 C166,115.73 159.73,122 152,122 L24,122 C16.27,122 10,115.73 10,108 C10,100.27 16.27,94 24,94 Z" />
+    <!-- Quick Log Income CTA pill -->
+    <path
+        android:fillColor="#182C2A"
+        android:pathData="M186,94 L296,94 C303.73,94 310,100.27 310,108 C310,115.73 303.73,122 296,122 L186,122 C178.27,122 172,115.73 172,108 C172,100.27 178.27,94 186,94 Z" />
+    <path
+        android:fillColor="#C8F865"
+        android:pathData="M192,108 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0" />
+</vector>
