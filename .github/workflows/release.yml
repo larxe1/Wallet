@@ -1,0 +1,107 @@
+name: Release Android APK
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-android:
+    name: Build and Release Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read release metadata from version.json
+        id: meta
+        run: |
+          node -e '
+            const fs = require("fs");
+            const v = JSON.parse(fs.readFileSync("version.json", "utf8"));
+            if (!v.version) throw new Error("Missing version in version.json");
+            const notes = v.releaseNotes || `Money Tracker v${v.version}`;
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${v.version}\nnotes<<GH_EOF\n${notes}\nGH_EOF\n`);
+          '
+
+      - name: Verify tag matches version.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          EXPECTED="v${{ steps.meta.outputs.version }}"
+          if [ "${GITHUB_REF_NAME}" != "${EXPECTED}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match version.json (${EXPECTED})"
+            exit 1
+          fi
+
+      - name: Validate required Supabase secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Missing SUPABASE_URL or SUPABASE_ANON_KEY repository secrets. Add SUPABASE_URL and SUPABASE_ANON_KEY under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Android unit tests
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Build Android APK
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd android
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > app/release-keystore.jks
+            KEY_PASS="${ANDROID_KEY_PASSWORD:-$ANDROID_KEYSTORE_PASSWORD}"
+            ./gradlew --no-daemon assembleRelease \
+              -Pandroid.injected.signing.store.file="$PWD/app/release-keystore.jks" \
+              -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
+              -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
+              -Pandroid.injected.signing.key.password="$KEY_PASS"
+            rm -f app/release-keystore.jks
+            cd ..
+            cp android/app/build/outputs/apk/release/app-release.apk Money-Tracker.apk
+          else
+            ./gradlew --no-daemon assembleDebug
+            cd ..
+            cp android/app/build/outputs/apk/debug/app-debug.apk Money-Tracker.apk
+          fi
+
+      - name: Upload APK workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Money-Tracker-apk
+          path: Money-Tracker.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.meta.outputs.version }}
+          name: Money Tracker v${{ steps.meta.outputs.version }}
+          body: ${{ steps.meta.outputs.notes }}
+          files: |
+            Money-Tracker.apk
+            version.json
+          make_latest: true

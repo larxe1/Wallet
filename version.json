@@ -1,0 +1,6 @@
+{
+  "version": "1.2.0",
+  "build": 2,
+  "releasedAt": "2026-11-27T00:06:00Z",
+  "releaseNotes": "Initial native Android release featuring the Obsidian Ledger design, full 6-screen Supabase sync, inline calculator, recurring auto-post, and an interactive Jetpack Glance home screen widget with privacy masking and 1-tap quick logging."
+}
