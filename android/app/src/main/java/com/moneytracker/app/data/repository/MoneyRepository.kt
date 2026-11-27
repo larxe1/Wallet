@@ -341,7 +341,7 @@ class MoneyRepository(
             CategoryInsert(
                 userId = userId,
                 name = name.trim(),
-                icon = icon.ifBlank { "🏷️" },
+                icon = icon.ifBlank { "tag" },
                 sortOrder = sortOrder
             )
         )

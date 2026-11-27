@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.moneytracker.app.domain.FinanceMath
+import com.moneytracker.app.ui.components.CategoryIcon
 import com.moneytracker.app.ui.components.EmeraldPrimaryButton
 import com.moneytracker.app.ui.components.ObsidianSegmentedPill
 import com.moneytracker.app.ui.components.parseHexColor
@@ -350,7 +351,7 @@ private fun QuickLogOverlaySheet(
                             listOf("7", "8", "9", "÷"),
                             listOf("4", "5", "6", "×"),
                             listOf("1", "2", "3", "-"),
-                            listOf(".", "0", "⌫", "+")
+                            listOf(".", "0", "BACK", "+")
                         )
                         rows.forEach { row ->
                             Row(
@@ -362,10 +363,10 @@ private fun QuickLogOverlaySheet(
                                     QuickCalcKey(
                                         label = key,
                                         isAccent = isOp,
-                                        isBackspace = key == "⌫",
+                                        isBackspace = key == "BACK",
                                         onClick = {
                                             when (key) {
-                                                "⌫" -> viewModel.backspaceCalc()
+                                                "BACK" -> viewModel.backspaceCalc()
                                                 else -> viewModel.appendCalcToken(key)
                                             }
                                         },
@@ -483,10 +484,18 @@ private fun QuickLogOverlaySheet(
                             state.categories.forEach { cat ->
                                 val selected = state.selectedCategoryId == cat.id
                                 QuickSelectChip(
-                                    label = "${cat.icon} ${cat.name}",
+                                    label = cat.name,
                                     dotColor = null,
                                     selected = selected,
-                                    onClick = { viewModel.setCategory(cat.id) }
+                                    onClick = { viewModel.setCategory(cat.id) },
+                                    leadingIcon = {
+                                        CategoryIcon(
+                                            categoryName = cat.name,
+                                            storedIcon = cat.icon,
+                                            tint = if (selected) ObsidianColors.TextOnAccent else ObsidianColors.TextSecondary,
+                                            size = 15.dp
+                                        )
+                                    }
                                 )
                             }
                         }
@@ -702,7 +711,8 @@ private fun QuickSelectChip(
     label: String,
     dotColor: Color?,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -725,7 +735,9 @@ private fun QuickSelectChip(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                if (dotColor != null) {
+                if (leadingIcon != null) {
+                    leadingIcon()
+                } else if (dotColor != null) {
                     Box(
                         modifier = Modifier
                             .size(8.dp)

@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -75,6 +76,7 @@ import com.moneytracker.app.data.model.PaymentMethod
 import com.moneytracker.app.data.model.TransactionSortOrder
 import com.moneytracker.app.data.model.Wallet
 import com.moneytracker.app.domain.FinanceMath
+import com.moneytracker.app.ui.components.CategoryIcon
 import com.moneytracker.app.ui.components.ConfirmDeleteDialog
 import com.moneytracker.app.ui.components.EmeraldPrimaryButton
 import com.moneytracker.app.ui.components.EmptyStateCard
@@ -130,43 +132,19 @@ fun ExpensesScreen(
     val categoryMap = remember(uiState.categories) { uiState.categories.associateBy { it.id } }
     val paymentMethodMap = remember(uiState.paymentMethods) { uiState.paymentMethods.associateBy { it.id } }
 
-    PullToRefreshBox(
-        isRefreshing = uiState.isLoading && uiState.rawExpenses.isNotEmpty(),
-        onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading && uiState.rawExpenses.isNotEmpty(),
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Header + Month Selector + Add Button
-            item(key = "header") {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Expenses",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = ObsidianColors.TextPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        EmeraldPrimaryButton(
-                            text = "Add",
-                            icon = Icons.Rounded.Add,
-                            onClick = {
-                                editingExpense = null
-                                isFormOpen = true
-                            }
-                        )
-                    }
-
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 88.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Month Selector
+                item(key = "header") {
                     MonthSelectorPill(
                         month = uiState.selectedMonth,
                         year = uiState.selectedYear,
@@ -174,7 +152,6 @@ fun ExpensesScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-            }
 
             // 3 KPI Tiles (1 full-width primary + 2-column secondary for clean phone legibility)
             item(key = "kpis") {
@@ -540,11 +517,36 @@ fun ExpensesScreen(
         }
     }
 
+        FloatingActionButton(
+            onClick = {
+                editingExpense = null
+                isFormOpen = true
+            },
+            containerColor = ObsidianColors.EmeraldPrimary,
+            contentColor = ObsidianColors.TextOnAccent,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add expense"
+            )
+        }
+    }
+
     if (showCategoryFilterSheet) {
         MultiSelectFilterSheet(
             title = "Filter Categories",
             items = uiState.categories.map { c ->
-                FilterOption(id = c.id, label = "${c.icon} ${c.name}", tag = null)
+                FilterOption(
+                    id = c.id,
+                    label = c.name,
+                    tag = null,
+                    categoryName = c.name,
+                    categoryIcon = c.icon
+                )
             },
             selectedIds = uiState.selectedCategoryIds,
             onToggle = { id -> viewModel.toggleCategoryFilter(id) },
@@ -643,7 +645,7 @@ private fun ExpenseLedgerCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val catIcon = category?.icon ?: expense.categories?.icon ?: "🏷️"
+    val catIcon = category?.icon ?: expense.categories?.icon ?: "tag"
     val catName = category?.name ?: expense.categories?.name ?: "Uncategorized"
     val walletName = wallet?.name ?: expense.wallets?.name ?: "Unknown"
     val walletColor = parseHexColor(wallet?.color ?: expense.wallets?.color)
@@ -675,7 +677,7 @@ private fun ExpenseLedgerCard(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    // Emoji category pill
+                    // Category pill
                     Surface(
                         shape = RoundedCornerShape(999.dp),
                         color = ObsidianColors.JadeMuted,
@@ -686,7 +688,12 @@ private fun ExpenseLedgerCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(text = catIcon, fontSize = 12.sp)
+                            CategoryIcon(
+                                categoryName = catName,
+                                storedIcon = catIcon,
+                                tint = ObsidianColors.TextSecondary,
+                                size = 13.dp
+                            )
                             Text(
                                 text = catName,
                                 style = MaterialTheme.typography.labelSmall,
@@ -852,7 +859,9 @@ private fun ExpenseSkeletonCard() {
 private data class FilterOption(
     val id: String,
     val label: String,
-    val tag: String?
+    val tag: String?,
+    val categoryName: String? = null,
+    val categoryIcon: String? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -940,6 +949,15 @@ private fun MultiSelectFilterSheet(
                                 )
                             )
                             Spacer(modifier = Modifier.width(8.dp))
+                            if (option.categoryName != null || option.categoryIcon != null) {
+                                CategoryIcon(
+                                    categoryName = option.categoryName,
+                                    storedIcon = option.categoryIcon,
+                                    tint = ObsidianColors.TextSecondary,
+                                    size = 18.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
                             Text(
                                 text = option.label,
                                 style = MaterialTheme.typography.bodyLarge,

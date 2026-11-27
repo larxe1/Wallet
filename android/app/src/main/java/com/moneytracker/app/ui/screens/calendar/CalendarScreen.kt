@@ -119,20 +119,14 @@ fun CalendarScreen(
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Calendar",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = ObsidianColors.TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
                 MonthSelectorPill(
                     month = state.selectedMonth,
                     year = state.selectedYear,
-                    onChange = { m, y -> viewModel.setMonthYear(y, m) }
+                    onChange = { m, y -> viewModel.setMonthYear(y, m) },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

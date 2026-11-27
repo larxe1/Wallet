@@ -157,9 +157,6 @@ fun TrendBarChart(
                 )
             }
 
-            val hatchSpacing = 7.dp.toPx()
-            val hatchStroke = 1.2.dp.toPx()
-
             trendData.forEachIndexed { idx, point ->
                 val centerX = slotW * idx + slotW * 0.5f
                 val ratio = (point.total / maxVal).toFloat().coerceIn(0f, 1f)
@@ -189,41 +186,12 @@ fun TrendBarChart(
                 if (isSelected) {
                     drawPath(
                         path = barPath,
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                ObsidianColors.ElectricViolet,
-                                ObsidianColors.VioletDeep
-                            ),
-                            startY = top,
-                            endY = bottom
-                        )
-                    )
-                    drawPath(
-                        path = barPath,
-                        color = Color.White.copy(alpha = 0.2f),
-                        style = Stroke(width = 1.dp.toPx())
+                        color = ObsidianColors.ElectricViolet
                     )
                 } else {
                     drawPath(
                         path = barPath,
-                        color = ObsidianColors.JadeElevated
-                    )
-                    clipPath(barPath) {
-                        var startX = left - barH
-                        while (startX < right + barH) {
-                            drawLine(
-                                color = ObsidianColors.HairlineHover,
-                                start = Offset(startX, bottom),
-                                end = Offset(startX + barH, top),
-                                strokeWidth = hatchStroke
-                            )
-                            startX += hatchSpacing
-                        }
-                    }
-                    drawPath(
-                        path = barPath,
-                        color = ObsidianColors.Hairline,
-                        style = Stroke(width = 1.dp.toPx())
+                        color = ObsidianColors.JadeMuted
                     )
                 }
             }
@@ -387,8 +355,15 @@ fun CategoryDonutChart(
                                 .background(sliceColor)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
+                        CategoryIcon(
+                            categoryName = cat.name,
+                            storedIcon = cat.icon,
+                            tint = ObsidianColors.TextSecondary,
+                            size = 15.dp
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "${cat.icon} ${cat.name}",
+                            text = cat.name,
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                             ),
@@ -478,13 +453,9 @@ fun CategoryAveragesList(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(ratio)
-                            .height(8.dp)
+                            .height(6.dp)
                             .clip(RoundedCornerShape(999.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(barColor, ObsidianColors.EmeraldPrimary)
-                                )
-                            )
+                            .background(barColor)
                     )
                 }
             }
@@ -574,7 +545,7 @@ fun SpendingPaceSparkline(
             path = areaPath,
             brush = Brush.verticalGradient(
                 colors = listOf(
-                    ObsidianColors.EmeraldPrimary.copy(alpha = 0.30f),
+                    ObsidianColors.EmeraldPrimary.copy(alpha = 0.14f),
                     ObsidianColors.EmeraldPrimary.copy(alpha = 0.0f)
                 ),
                 startY = padTop,
@@ -584,19 +555,13 @@ fun SpendingPaceSparkline(
 
         drawPath(
             path = linePath,
-            color = ObsidianColors.EmeraldBright,
-            style = Stroke(width = 2.4.dp.toPx(), cap = StrokeCap.Round)
+            color = ObsidianColors.EmeraldPrimary,
+            style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
         )
 
-        // Glowing terminal vertex node
         drawCircle(
-            color = ObsidianColors.EmeraldPrimary.copy(alpha = 0.32f),
-            radius = 6.dp.toPx(),
-            center = lastPt
-        )
-        drawCircle(
-            color = ObsidianColors.ChartreuseLime,
-            radius = 3.2.dp.toPx(),
+            color = ObsidianColors.EmeraldPrimary,
+            radius = 3.dp.toPx(),
             center = lastPt
         )
     }

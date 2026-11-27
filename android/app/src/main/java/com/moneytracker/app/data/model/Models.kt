@@ -59,7 +59,7 @@ data class Category(
     val id: String,
     @SerialName("user_id") val userId: String = "",
     val name: String,
-    val icon: String = "🏷️",
+    val icon: String = "tag",
     @SerialName("sort_order") val sortOrder: Int = 0,
     @SerialName("is_default") val isDefault: Boolean = false,
     @SerialName("created_at") val createdAt: String? = null

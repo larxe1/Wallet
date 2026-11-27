@@ -100,7 +100,7 @@ private data class PrimaryDestination(
 )
 
 private val PRIMARY_DESTINATIONS = listOf(
-    PrimaryDestination(Routes.DASHBOARD, "Dashboard", Icons.Rounded.Dashboard),
+    PrimaryDestination(Routes.DASHBOARD, "Overview", Icons.Rounded.Dashboard),
     PrimaryDestination(Routes.EXPENSES, "Expenses", Icons.Rounded.ReceiptLong),
     PrimaryDestination(Routes.INCOME, "Income", Icons.Rounded.TrendingUp),
     PrimaryDestination(Routes.CALENDAR, "Calendar", Icons.Rounded.CalendarMonth),
@@ -116,20 +116,6 @@ fun MoneyTrackerRoot(container: AppContainer) {
         modifier = Modifier
             .fillMaxSize()
             .background(ObsidianColors.ObsidianCanvas)
-            .drawBehind {
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            ObsidianColors.AmbientGlow.copy(alpha = 0.52f),
-                            Color.Transparent
-                        ),
-                        center = Offset(size.width * 0.16f, size.height * 0.04f),
-                        radius = size.width * 0.95f
-                    ),
-                    radius = size.width * 0.95f,
-                    center = Offset(size.width * 0.16f, size.height * 0.04f)
-                )
-            }
     ) {
         if (!authState.isAuthenticated) {
             LoginScreen(viewModel = authViewModel)
@@ -278,9 +264,17 @@ private fun AuthenticatedShell(
                 containerColor = Color.Transparent,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 topBar = {
+                    val topBarTitle = when (currentRoute) {
+                        Routes.SETTINGS -> "Settings"
+                        Routes.EXPENSES -> "Expenses"
+                        Routes.INCOME -> "Income"
+                        Routes.CALENDAR -> "Calendar"
+                        Routes.RECURRING -> "Recurring"
+                        else -> "Overview"
+                    }
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = ObsidianColors.ObsidianCanvas.copy(alpha = 0.88f),
+                            containerColor = ObsidianColors.ObsidianCanvas,
                             titleContentColor = ObsidianColors.TextPrimary,
                             actionIconContentColor = ObsidianColors.TextSecondary,
                             navigationIconContentColor = ObsidianColors.TextPrimary
@@ -299,29 +293,20 @@ private fun AuthenticatedShell(
                             }
                         },
                         title = {
-                            if (isSettingsRoute) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (!isSettingsRoute && !useNavRail && currentRoute == Routes.DASHBOARD) {
+                                    MoneyTrackerLogoMark(size = 26.dp)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                }
                                 Text(
-                                    text = "Settings",
-                                    style = MaterialTheme.typography.titleLarge,
+                                    text = topBarTitle,
+                                    style = MaterialTheme.typography.titleLarge.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    color = ObsidianColors.TextPrimary,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                            } else {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    if (!useNavRail) {
-                                        MoneyTrackerLogoMark(size = 30.dp)
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                    }
-                                    Text(
-                                        text = "Money Tracker",
-                                        style = MaterialTheme.typography.titleLarge.copy(
-                                            fontWeight = FontWeight.ExtraBold
-                                        ),
-                                        color = ObsidianColors.TextPrimary,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
                             }
                         },
                         actions = {

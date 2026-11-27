@@ -52,18 +52,18 @@ object FinanceMath {
     )
 
     val DEFAULT_CATEGORIES: List<DefaultCategorySeed> = listOf(
-        DefaultCategorySeed("Rent", "🏠", 1),
-        DefaultCategorySeed("Restaurant", "🍔", 2),
-        DefaultCategorySeed("Grocery", "🛒", 3),
-        DefaultCategorySeed("Subscription", "🔄", 4),
-        DefaultCategorySeed("Transportation", "🚌", 5),
-        DefaultCategorySeed("Work/School", "💼", 6),
-        DefaultCategorySeed("Bills", "🧾", 7),
-        DefaultCategorySeed("Household Items", "🧻", 8),
-        DefaultCategorySeed("Technology", "💻", 9),
-        DefaultCategorySeed("Healthcare", "🏥", 10),
-        DefaultCategorySeed("Service", "🛠️", 11),
-        DefaultCategorySeed("Clothing", "👕", 12)
+        DefaultCategorySeed("Rent", "home", 1),
+        DefaultCategorySeed("Restaurant", "restaurant", 2),
+        DefaultCategorySeed("Grocery", "grocery", 3),
+        DefaultCategorySeed("Subscription", "subscription", 4),
+        DefaultCategorySeed("Transportation", "transit", 5),
+        DefaultCategorySeed("Work/School", "work", 6),
+        DefaultCategorySeed("Bills", "bills", 7),
+        DefaultCategorySeed("Household Items", "household", 8),
+        DefaultCategorySeed("Technology", "tech", 9),
+        DefaultCategorySeed("Healthcare", "health", 10),
+        DefaultCategorySeed("Service", "service", 11),
+        DefaultCategorySeed("Clothing", "clothing", 12)
     )
 
     fun isBeforeMonthFloor(year: Int, month: Int): Boolean {
@@ -588,7 +588,7 @@ object FinanceMath {
                         catMap[key] = CategorySpend(
                             categoryId = exp.categoryId,
                             name = exp.categories?.name ?: "Unknown",
-                            icon = exp.categories?.icon ?: "❓",
+                            icon = exp.categories?.icon ?: "tag",
                             totalAmount = exp.amount
                         )
                     } else {

@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.TrendingUp
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,8 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.moneytracker.app.data.model.RecurringTransaction
 import com.moneytracker.app.domain.FinanceMath
+import com.moneytracker.app.ui.components.CategoryIcon
 import com.moneytracker.app.ui.components.ConfirmDeleteDialog
-import com.moneytracker.app.ui.components.EmeraldPrimaryButton
 import com.moneytracker.app.ui.components.EmptyStateCard
 import com.moneytracker.app.ui.components.KpiStatTile
 import com.moneytracker.app.ui.components.ObsidianSurfaceCard
@@ -80,39 +81,17 @@ fun RecurringScreen(
         }
     }
 
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianColors.ObsidianCanvas),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .background(ObsidianColors.ObsidianCanvas)
     ) {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Recurring",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = ObsidianColors.TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-                EmeraldPrimaryButton(
-                    text = "Add",
-                    icon = Icons.Rounded.Add,
-                    onClick = {
-                        editingItem = null
-                        showFormSheet = true
-                    }
-                )
-            }
-        }
-
-        if (state.isLoading) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 88.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            if (state.isLoading) {
             item {
                 LinearProgressIndicator(
                     modifier = Modifier
@@ -193,6 +172,25 @@ fun RecurringScreen(
                     onDelete = { pendingDelete = item }
                 )
             }
+        }
+    }
+
+        FloatingActionButton(
+            onClick = {
+                editingItem = null
+                showFormSheet = true
+            },
+            containerColor = ObsidianColors.EmeraldPrimary,
+            contentColor = ObsidianColors.TextOnAccent,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add recurring rule"
+            )
         }
     }
 
@@ -330,14 +328,25 @@ private fun RecurringRuleCard(
                             color = ObsidianColors.JadeElevated,
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text(
-                                text = "${cat.icon.orEmpty()} ${cat.name}".trim(),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = ObsidianColors.TextSecondary,
+                            Row(
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                CategoryIcon(
+                                    categoryName = cat.name,
+                                    storedIcon = cat.icon,
+                                    tint = ObsidianColors.TextSecondary,
+                                    size = 13.dp
+                                )
+                                Text(
+                                    text = cat.name,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = ObsidianColors.TextSecondary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }

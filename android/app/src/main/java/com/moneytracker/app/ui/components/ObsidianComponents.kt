@@ -87,37 +87,25 @@ fun parseHexColor(hex: String?, fallback: Color = ObsidianColors.EmeraldPrimary)
 }
 
 /**
- * Sculpted Obsidian surface card with 1dp low-opacity hairline and subtle top specular sheen.
+ * Clean Obsidian surface card with 1dp hairline border and zero specular sheen or drop shadow.
  */
 @Composable
 fun ObsidianSurfaceCard(
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = 20.dp,
+    cornerRadius: Dp = 16.dp,
     containerColor: Color = ObsidianColors.JadeSurface,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
     val shape = RoundedCornerShape(cornerRadius)
     Surface(
-        modifier = modifier
-            .clip(shape)
-            .drawWithContent {
-                drawContent()
-                val strokePx = 1.dp.toPx()
-                val insetX = cornerRadius.toPx().coerceAtMost(size.width * 0.25f)
-                drawLine(
-                    color = ObsidianColors.SpecularTop,
-                    start = Offset(insetX, strokePx * 0.5f),
-                    end = Offset(size.width - insetX, strokePx * 0.5f),
-                    strokeWidth = strokePx
-                )
-            },
+        modifier = modifier.clip(shape),
         shape = shape,
         color = containerColor,
         contentColor = ObsidianColors.TextPrimary,
         border = BorderStroke(1.dp, ObsidianColors.Hairline),
         tonalElevation = 0.dp,
-        shadowElevation = 2.dp
+        shadowElevation = 0.dp
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
@@ -127,7 +115,7 @@ fun ObsidianSurfaceCard(
 }
 
 /**
- * Primary emerald CTA button with perceptual emerald ramp and >=48dp touch target.
+ * Primary solid emerald CTA button with >=48dp touch target.
  */
 @Composable
 fun EmeraldPrimaryButton(
@@ -138,29 +126,14 @@ fun EmeraldPrimaryButton(
     icon: ImageVector? = null
 ) {
     val shape = RoundedCornerShape(12.dp)
-    val gradient = if (enabled) {
-        Brush.horizontalGradient(
-            colors = listOf(
-                ObsidianColors.EmeraldBright,
-                ObsidianColors.EmeraldPrimary,
-                ObsidianColors.EmeraldMid
-            )
-        )
-    } else {
-        Brush.horizontalGradient(
-            colors = listOf(
-                ObsidianColors.JadeMuted,
-                ObsidianColors.JadeMuted
-            )
-        )
-    }
+    val bgColor = if (enabled) ObsidianColors.EmeraldPrimary else ObsidianColors.JadeMuted
     val contentColor = if (enabled) ObsidianColors.TextOnAccent else ObsidianColors.TextMuted
 
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
             .clip(shape)
-            .background(brush = gradient, shape = shape)
+            .background(color = bgColor, shape = shape)
             .clickable(
                 enabled = enabled,
                 role = Role.Button,
@@ -575,7 +548,7 @@ fun KpiStatTile(
 ) {
     ObsidianSurfaceCard(
         modifier = modifier,
-        cornerRadius = 18.dp,
+        cornerRadius = 16.dp,
         contentPadding = PaddingValues(14.dp)
     ) {
         Row(
@@ -587,21 +560,13 @@ fun KpiStatTile(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(iconTint.copy(alpha = 0.14f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconTint,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelMedium,
@@ -722,27 +687,19 @@ fun EmptyStateCard(
 ) {
     ObsidianSurfaceCard(
         modifier = Modifier.fillMaxWidth(),
-        cornerRadius = 20.dp,
+        cornerRadius = 16.dp,
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 28.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(ObsidianColors.EmeraldPrimary.copy(alpha = 0.14f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = ObsidianColors.EmeraldPrimary,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = ObsidianColors.TextSecondary,
+                modifier = Modifier.size(28.dp)
+            )
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = title,
@@ -834,7 +791,7 @@ fun <T> ObsidianSegmentedPill(
 }
 
 /**
- * Geometric emerald-gradient brand emblem with ascending angular pulse and chartreuse vertex node.
+ * Clean geometric brand mark with crisp ledger pulse line.
  */
 @Composable
 fun MoneyTrackerLogoMark(
@@ -844,33 +801,19 @@ fun MoneyTrackerLogoMark(
     Canvas(modifier = modifier.size(size)) {
         val w = this.size.width
         val h = this.size.height
-        val radius = w * 0.28f
+        val radius = w * 0.26f
 
         drawRoundRect(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    ObsidianColors.EmeraldBright,
-                    ObsidianColors.EmeraldPrimary,
-                    ObsidianColors.EmeraldDeep
-                ),
-                start = Offset(0f, 0f),
-                end = Offset(w, h)
-            ),
+            color = ObsidianColors.EmeraldPrimary,
             cornerRadius = CornerRadius(radius, radius)
         )
 
-        drawRoundRect(
-            color = Color.White.copy(alpha = 0.2f),
-            cornerRadius = CornerRadius(radius, radius),
-            style = Stroke(width = (w * 0.03f).coerceAtLeast(1f))
-        )
-
         val pulsePath = Path().apply {
-            moveTo(w * 0.20f, h * 0.64f)
+            moveTo(w * 0.22f, h * 0.64f)
             lineTo(w * 0.40f, h * 0.64f)
             lineTo(w * 0.50f, h * 0.42f)
             lineTo(w * 0.60f, h * 0.56f)
-            lineTo(w * 0.78f, h * 0.28f)
+            lineTo(w * 0.78f, h * 0.30f)
         }
         drawPath(
             path = pulsePath,
@@ -880,12 +823,6 @@ fun MoneyTrackerLogoMark(
                 cap = StrokeCap.Round,
                 join = StrokeJoin.Round
             )
-        )
-
-        drawCircle(
-            color = ObsidianColors.ChartreuseLime,
-            radius = w * 0.095f,
-            center = Offset(w * 0.78f, h * 0.28f)
         )
     }
 }

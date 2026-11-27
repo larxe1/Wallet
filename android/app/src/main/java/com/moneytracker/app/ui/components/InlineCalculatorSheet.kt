@@ -67,7 +67,7 @@ private data class CalcKey(
 private val CALC_KEYPAD_ROWS: List<List<CalcKey>> = listOf(
     listOf(
         CalcKey("C", "C", "Clear", CalcKeyKind.FUNCTION),
-        CalcKey("BACK", "⌫", "Backspace", CalcKeyKind.FUNCTION),
+        CalcKey("BACK", "BACK", "Backspace", CalcKeyKind.FUNCTION),
         CalcKey("%", "%", "Percent", CalcKeyKind.FUNCTION),
         CalcKey("÷", "÷", "Divide", CalcKeyKind.OPERATOR)
     ),
@@ -93,7 +93,7 @@ private val CALC_KEYPAD_ROWS: List<List<CalcKey>> = listOf(
         CalcKey("0", "0", "0", CalcKeyKind.DIGIT),
         CalcKey(".", ".", "Decimal point", CalcKeyKind.DIGIT),
         CalcKey("=", "=", "Equals", CalcKeyKind.EQUALS),
-        CalcKey("APPLY", "✓", "Apply result", CalcKeyKind.APPLY)
+        CalcKey("APPLY", "OK", "Apply result", CalcKeyKind.APPLY)
     )
 )
 

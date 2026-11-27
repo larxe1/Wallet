@@ -34,7 +34,6 @@ import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddToHomeScreen
-import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CreditCard
@@ -44,6 +43,7 @@ import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.rounded.Tag
 import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.material3.ButtonDefaults
@@ -84,6 +84,8 @@ import com.moneytracker.app.data.model.Category
 import com.moneytracker.app.data.model.PaymentMethod
 import com.moneytracker.app.data.model.Wallet
 import com.moneytracker.app.domain.FinanceMath
+import com.moneytracker.app.ui.components.CATEGORY_ICON_OPTIONS
+import com.moneytracker.app.ui.components.CategoryIcon
 import com.moneytracker.app.ui.components.ConfirmDeleteDialog
 import com.moneytracker.app.ui.components.EmeraldPrimaryButton
 import com.moneytracker.app.ui.components.ObsidianSurfaceCard
@@ -93,12 +95,6 @@ import com.moneytracker.app.ui.theme.ObsidianColors
 import com.moneytracker.app.viewmodel.SettingsViewModel
 import com.moneytracker.app.widget.WalletGlanceWidgetReceiver
 import java.util.Locale
-
-private val CATEGORY_EMOJIS = listOf(
-    "🏠", "🛒", "🍔", "🚗", "⚡", "🎮",
-    "🎬", "🏋️", "💰", "💳", "📦", "❤️",
-    "🎁", "✈️", "📚", "👔", "🐾", "🏥"
-)
 
 private val CARD_NETWORKS = listOf("Visa", "Mastercard", "Amex")
 
@@ -151,16 +147,6 @@ fun SettingsScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        item {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.headlineSmall,
-                color = ObsidianColors.TextPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
         if (state.isLoading) {
             item {
                 LinearProgressIndicator(
@@ -181,26 +167,20 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    SectionIconBadge(
-                        icon = Icons.Rounded.Widgets,
-                        tint = ObsidianColors.EmeraldPrimary
+                    Icon(
+                        imageVector = Icons.Rounded.Widgets,
+                        contentDescription = null,
+                        tint = ObsidianColors.EmeraldPrimary,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Home Screen Widget",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = ObsidianColors.TextPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = "Balance overview & 1-tap quick log",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ObsidianColors.TextSecondary,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Text(
+                        text = "Home Screen Widget",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = ObsidianColors.TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 EmeraldPrimaryButton(
@@ -547,7 +527,7 @@ fun SettingsScreen(
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.AutoAwesome,
+                            imageVector = Icons.Rounded.PlaylistAddCheck,
                             contentDescription = null,
                             tint = ObsidianColors.ElectricViolet,
                             modifier = Modifier.size(17.dp)
@@ -729,20 +709,12 @@ private fun SectionHeader(
 
 @Composable
 private fun SectionIconBadge(icon: ImageVector, tint: Color) {
-    Box(
-        modifier = Modifier
-            .size(32.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(tint.copy(alpha = 0.16f)),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(18.dp)
-        )
-    }
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        tint = tint,
+        modifier = Modifier.size(20.dp)
+    )
 }
 
 @Composable
@@ -907,9 +879,11 @@ private fun CategoryChipItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Text(
-            text = category.icon,
-            fontSize = 15.sp
+        CategoryIcon(
+            categoryName = category.name,
+            storedIcon = category.icon,
+            tint = ObsidianColors.TextSecondary,
+            size = 16.dp
         )
         Text(
             text = category.name,
@@ -955,7 +929,7 @@ private fun AddCategoryBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var name by remember { mutableStateOf("") }
-    var icon by remember { mutableStateOf(CATEGORY_EMOJIS.first()) }
+    var iconKey by remember { mutableStateOf(CATEGORY_ICON_OPTIONS.first().key) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
@@ -1015,7 +989,12 @@ private fun AddCategoryBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = icon.ifBlank { "🏷️" }, fontSize = 18.sp)
+                CategoryIcon(
+                    categoryName = name,
+                    storedIcon = iconKey,
+                    tint = ObsidianColors.EmeraldPrimary,
+                    size = 18.dp
+                )
                 Text(
                     text = name.trim().ifEmpty { "Category Preview" },
                     style = MaterialTheme.typography.bodyMedium,
@@ -1038,15 +1017,10 @@ private fun AddCategoryBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
-                value = icon,
-                onValueChange = { next ->
-                    if (next.length <= 4) icon = next
-                },
-                label = { Text("Emoji Icon") },
-                singleLine = true,
-                colors = fieldColors,
-                modifier = Modifier.fillMaxWidth()
+            Text(
+                text = "Icon",
+                style = MaterialTheme.typography.labelMedium,
+                color = ObsidianColors.TextSecondary
             )
 
             FlowRow(
@@ -1054,15 +1028,15 @@ private fun AddCategoryBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CATEGORY_EMOJIS.forEach { emoji ->
-                    val selected = emoji == icon
+                CATEGORY_ICON_OPTIONS.forEach { option ->
+                    val selected = option.key == iconKey
                     Box(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .background(
                                 if (selected) {
-                                    ObsidianColors.EmeraldPrimary.copy(alpha = 0.22f)
+                                    ObsidianColors.EmeraldPrimary.copy(alpha = 0.16f)
                                 } else {
                                     ObsidianColors.JadeSurface
                                 }
@@ -1072,10 +1046,15 @@ private fun AddCategoryBottomSheet(
                                 color = if (selected) ObsidianColors.EmeraldPrimary else ObsidianColors.Hairline,
                                 shape = RoundedCornerShape(12.dp)
                             )
-                            .clickable { icon = emoji },
+                            .clickable { iconKey = option.key },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = emoji, fontSize = 20.sp)
+                        Icon(
+                            imageVector = option.icon,
+                            contentDescription = option.label,
+                            tint = if (selected) ObsidianColors.EmeraldPrimary else ObsidianColors.TextSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
@@ -1113,7 +1092,7 @@ private fun AddCategoryBottomSheet(
                         if (trimmed.isEmpty()) {
                             errorMsg = "Enter a category name."
                         } else {
-                            onSave(trimmed, icon.trim().ifEmpty { "🏷️" })
+                            onSave(trimmed, iconKey)
                         }
                     },
                     modifier = Modifier.weight(1.3f)

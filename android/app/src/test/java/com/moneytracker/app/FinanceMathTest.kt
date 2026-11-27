@@ -279,9 +279,11 @@ class FinanceMathTest {
         assertEquals(2026 to 10, FinanceMath.clampToMonthFloor(2026, 10))
         assertEquals(12, FinanceMath.DEFAULT_CATEGORIES.size)
         assertEquals("Rent", FinanceMath.DEFAULT_CATEGORIES.first().name)
-        assertEquals("🏠", FinanceMath.DEFAULT_CATEGORIES.first().icon)
+        assertEquals("home", FinanceMath.DEFAULT_CATEGORIES.first().icon)
         assertEquals("Clothing", FinanceMath.DEFAULT_CATEGORIES.last().name)
-        assertEquals("👕", FinanceMath.DEFAULT_CATEGORIES.last().icon)
+        assertEquals("clothing", FinanceMath.DEFAULT_CATEGORIES.last().icon)
+        assertTrue(FinanceMath.DEFAULT_CATEGORIES.all { seed -> seed.icon.all { it.code in 32..126 } })
+        assertEquals('\u20B1', FinanceMath.formatPhpCurrency(10.0).first())
     }
 
     @Test

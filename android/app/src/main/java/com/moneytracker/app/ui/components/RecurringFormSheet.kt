@@ -758,10 +758,13 @@ private fun CategoryDropdownField(
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = selected?.let { "${it.icon} ${it.name}" } ?: "Select Category",
+            value = selected?.name ?: "Select Category",
             onValueChange = {},
             readOnly = true,
             label = { Text("Category") },
+            leadingIcon = selected?.let { cat ->
+                { CategoryIcon(categoryName = cat.name, storedIcon = cat.icon, size = 18.dp) }
+            },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = fieldColors,
             singleLine = true,
@@ -776,9 +779,12 @@ private fun CategoryDropdownField(
         ) {
             categories.forEach { c ->
                 DropdownMenuItem(
+                    leadingIcon = {
+                        CategoryIcon(categoryName = c.name, storedIcon = c.icon, size = 18.dp)
+                    },
                     text = {
                         Text(
-                            text = "${c.icon} ${c.name}",
+                            text = c.name,
                             color = ObsidianColors.TextPrimary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis

@@ -457,9 +457,17 @@ fun ExpenseFormSheet(
                         FilterChip(
                             selected = selected,
                             onClick = { selectedCategoryId = category.id },
+                            leadingIcon = {
+                                CategoryIcon(
+                                    categoryName = category.name,
+                                    storedIcon = category.icon,
+                                    tint = if (selected) ObsidianColors.EmeraldBright else ObsidianColors.TextSecondary,
+                                    size = 16.dp
+                                )
+                            },
                             label = {
                                 Text(
-                                    text = "${category.icon} ${category.name}",
+                                    text = category.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )

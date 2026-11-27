@@ -10,8 +10,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
@@ -25,6 +28,7 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
@@ -39,18 +43,19 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.moneytracker.app.MainActivity
 import com.moneytracker.app.QuickLogActivity
+import com.moneytracker.app.R
 import com.moneytracker.app.data.local.WidgetSnapshotStore
 import com.moneytracker.app.data.model.WidgetSnapshot
 import com.moneytracker.app.domain.FinanceMath
 
-private val WIDGET_BG = Color(0xFF121E1B)
-private val WIDGET_ELEVATED = Color(0xFF172622)
-private val WIDGET_EXPENSE_BG = Color(0xFF2B181E)
-private val WIDGET_EMERALD = Color(0xFF28C991)
-private val WIDGET_DANGER = Color(0xFFF06478)
-private val WIDGET_TEXT_PRIMARY = Color(0xFFF2F7F5)
-private val WIDGET_TEXT_SECONDARY = Color(0xFF98ADA6)
-private val WIDGET_TEXT_ON_ACCENT = Color(0xFF051A13)
+private val WIDGET_BG = Color(0xFF101715)
+private val WIDGET_ELEVATED = Color(0xFF18221F)
+private val WIDGET_EXPENSE_BG = Color(0xFF281A1D)
+private val WIDGET_EMERALD = Color(0xFF26B883)
+private val WIDGET_DANGER = Color(0xFFE36475)
+private val WIDGET_TEXT_PRIMARY = Color(0xFFF0F4F2)
+private val WIDGET_TEXT_SECONDARY = Color(0xFF96ABA3)
+private val WIDGET_TEXT_ON_ACCENT = Color(0xFF061912)
 
 class WalletGlanceWidget : GlanceAppWidget() {
 
@@ -151,14 +156,18 @@ private fun WalletWidgetContent(snapshot: WidgetSnapshot) {
                     .padding(horizontal = 10.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = if (snapshot.isPrivacyMasked) "Show" else "Hide",
-                    style = TextStyle(
-                        color = ColorProvider(WIDGET_TEXT_SECONDARY),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
+                Image(
+                    provider = ImageProvider(
+                        if (snapshot.isPrivacyMasked) {
+                            R.drawable.ic_widget_visibility
+                        } else {
+                            R.drawable.ic_widget_visibility_off
+                        }
                     ),
-                    maxLines = 1
+                    contentDescription = if (snapshot.isPrivacyMasked) "Show balance" else "Hide balance",
+                    modifier = GlanceModifier.size(16.dp),
+                    contentScale = ContentScale.Fit,
+                    colorFilter = ColorFilter.tint(ColorProvider(WIDGET_TEXT_SECONDARY))
                 )
             }
 
@@ -172,14 +181,12 @@ private fun WalletWidgetContent(snapshot: WidgetSnapshot) {
                     .padding(horizontal = 10.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "↻",
-                    style = TextStyle(
-                        color = ColorProvider(WIDGET_EMERALD),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1
+                Image(
+                    provider = ImageProvider(R.drawable.ic_widget_refresh),
+                    contentDescription = "Refresh balance",
+                    modifier = GlanceModifier.size(16.dp),
+                    contentScale = ContentScale.Fit,
+                    colorFilter = ColorFilter.tint(ColorProvider(WIDGET_EMERALD))
                 )
             }
         }

@@ -65,6 +65,7 @@ import com.moneytracker.app.data.model.RecentTxItem
 import com.moneytracker.app.domain.FinanceMath
 import com.moneytracker.app.ui.components.CategoryAveragesList
 import com.moneytracker.app.ui.components.CategoryDonutChart
+import com.moneytracker.app.ui.components.CategoryIcon
 import com.moneytracker.app.ui.components.ExpenseFormSheet
 import com.moneytracker.app.ui.components.IncomeFormSheet
 import com.moneytracker.app.ui.components.KpiStatTile
@@ -144,40 +145,27 @@ fun DashboardScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header: Title + Privacy Toggle + Refresh
+            // Compact Privacy Toggle + Refresh bar (TopAppBar carries Overview title)
             item(key = "header") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "My Dashboard",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = ObsidianColors.TextPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
+                    PrivacyTogglePill(
+                        isPrivacyMode = state.isPrivacyMode,
+                        onToggle = { viewModel.togglePrivacyMode() }
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    IconButton(
+                        onClick = { viewModel.refresh() },
+                        modifier = Modifier.size(48.dp)
                     ) {
-                        PrivacyTogglePill(
-                            isPrivacyMode = state.isPrivacyMode,
-                            onToggle = { viewModel.togglePrivacyMode() }
+                        Icon(
+                            imageVector = Icons.Rounded.Refresh,
+                            contentDescription = "Refresh dashboard",
+                            tint = ObsidianColors.TextSecondary
                         )
-                        IconButton(
-                            onClick = { viewModel.refresh() },
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Refresh dashboard",
-                                tint = ObsidianColors.TextSecondary
-                            )
-                        }
                     }
                 }
             }
@@ -366,7 +354,7 @@ fun DashboardScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clickable(role = Role.Button, onClick = onNavigateToRecurring),
-                        cornerRadius = 20.dp,
+                        cornerRadius = 16.dp,
                         contentPadding = PaddingValues(14.dp)
                     ) {
                         Row(
@@ -374,20 +362,12 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(ObsidianColors.ElectricViolet.copy(alpha = 0.16f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Repeat,
-                                    contentDescription = null,
-                                    tint = ObsidianColors.ElectricViolet,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Rounded.Repeat,
+                                contentDescription = null,
+                                tint = ObsidianColors.ElectricViolet,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Text(
                                 text = "${rec?.activeCount ?: 0} active",
                                 style = MonoStyle.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
@@ -440,7 +420,7 @@ fun DashboardScreen(
                     }
                     ObsidianSurfaceCard(
                         modifier = Modifier.weight(1f),
-                        cornerRadius = 20.dp,
+                        cornerRadius = 16.dp,
                         contentPadding = PaddingValues(14.dp)
                     ) {
                         Row(
@@ -448,20 +428,12 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(ObsidianColors.EmeraldPrimary.copy(alpha = 0.16f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.TrendingUp,
-                                    contentDescription = null,
-                                    tint = ObsidianColors.EmeraldPrimary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Rounded.TrendingUp,
+                                contentDescription = null,
+                                tint = ObsidianColors.EmeraldPrimary,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(999.dp))
@@ -738,10 +710,10 @@ private fun RecentTxRow(
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .size(36.dp)
+                .clip(RoundedCornerShape(10.dp))
                 .background(
-                    if (isIncome) ObsidianColors.EmeraldPrimary.copy(alpha = 0.14f)
+                    if (isIncome) ObsidianColors.EmeraldPrimary.copy(alpha = 0.12f)
                     else ObsidianColors.JadeElevated
                 ),
             contentAlignment = Alignment.Center
@@ -754,9 +726,11 @@ private fun RecentTxRow(
                     modifier = Modifier.size(18.dp)
                 )
             } else {
-                Text(
-                    text = item.categoryIcon?.takeIf { it.isNotBlank() } ?: "🧾",
-                    fontSize = 18.sp
+                CategoryIcon(
+                    categoryName = item.description,
+                    storedIcon = item.categoryIcon,
+                    tint = ObsidianColors.TextSecondary,
+                    size = 18.dp
                 )
             }
         }
@@ -884,9 +858,11 @@ private fun CategoryExclusionSheet(
                                 )
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = cat.icon,
-                                fontSize = 18.sp
+                            CategoryIcon(
+                                categoryName = cat.name,
+                                storedIcon = cat.icon,
+                                tint = if (excluded) ObsidianColors.TextPrimary else ObsidianColors.TextSecondary,
+                                size = 18.dp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(

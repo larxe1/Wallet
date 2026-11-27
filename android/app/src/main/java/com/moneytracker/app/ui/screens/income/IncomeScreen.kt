@@ -36,6 +36,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -112,43 +113,19 @@ fun IncomeScreen(
 
     val walletMap = remember(uiState.wallets) { uiState.wallets.associateBy { it.id } }
 
-    PullToRefreshBox(
-        isRefreshing = uiState.isLoading && uiState.rawIncome.isNotEmpty(),
-        onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading && uiState.rawIncome.isNotEmpty(),
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Header + Month Selector + Add Button
-            item(key = "header") {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Income",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = ObsidianColors.TextPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        EmeraldPrimaryButton(
-                            text = "Add",
-                            icon = Icons.Rounded.Add,
-                            onClick = {
-                                editingIncome = null
-                                isFormOpen = true
-                            }
-                        )
-                    }
-
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 88.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Month Selector
+                item(key = "header") {
                     MonthSelectorPill(
                         month = uiState.selectedMonth,
                         year = uiState.selectedYear,
@@ -156,7 +133,6 @@ fun IncomeScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-            }
 
             // 3 KPI Tiles (1 full-width primary + 2-column secondary for clean phone legibility)
             item(key = "kpis") {
@@ -440,6 +416,25 @@ fun IncomeScreen(
                     }
                 }
             }
+        }
+    }
+
+        FloatingActionButton(
+            onClick = {
+                editingIncome = null
+                isFormOpen = true
+            },
+            containerColor = ObsidianColors.EmeraldPrimary,
+            contentColor = ObsidianColors.TextOnAccent,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add income"
+            )
         }
     }
 
