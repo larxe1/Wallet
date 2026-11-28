@@ -49,8 +49,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonPrimitive
 
 class SupabaseException(message: String, val statusCode: Int? = null) : Exception(message)
 
@@ -123,12 +123,15 @@ class SupabaseClient(
         val email: String? = null
     )
 
-    suspend fun signIn(email: String, password: String): AuthSession {
+    suspend fun signIn(email: String = OWNER_EMAIL, password: String): AuthSession {
+        if (!isAllowedOwnerEmail(email)) {
+            throw SupabaseException("This app is locked to $OWNER_EMAIL.", 403)
+        }
         val response = httpClient.post("$baseUrl/auth/v1/token") {
             parameter("grant_type", "password")
             header("apikey", anonKey)
             contentType(ContentType.Application.Json)
-            setBody(CredentialsPayload(email.trim(), password))
+            setBody(CredentialsPayload(OWNER_EMAIL, password))
         }
         val bodyText = response.bodyAsText()
         if (!response.status.isSuccess()) {
@@ -176,8 +179,16 @@ class SupabaseClient(
         }
         val bodyText = response.bodyAsText()
         if (!response.status.isSuccess()) {
-            sessionStore.clearSession()
-            throw UnauthorizedException(extractErrorMessage(bodyText, "Session refresh failed"))
+            if (shouldClearSessionOnRefreshFailure(response.status.value, bodyText)) {
+                sessionStore.clearSession()
+                throw UnauthorizedException(
+                    extractErrorMessage(bodyText, "Session expired. Please sign in again.")
+                )
+            }
+            throw SupabaseException(
+                extractErrorMessage(bodyText, "Temporary session refresh error"),
+                response.status.value
+            )
         }
         val parsed = json.decodeFromString<AuthSession>(bodyText)
         val normalized = normalizeExpiry(parsed)
@@ -223,7 +234,8 @@ class SupabaseClient(
             if (latest != null && latest.accessToken != failedAccessToken) {
                 return@withLock latest
             }
-            refreshSession(refreshToken)
+            val tokenToUse = latest?.refreshToken?.takeIf { it.isNotBlank() } ?: refreshToken
+            refreshSession(tokenToUse)
         }
     }
 
@@ -268,10 +280,10 @@ class SupabaseClient(
 
     private fun extractErrorMessage(bodyText: String, fallback: String): String {
         val parsed = runCatching { json.decodeFromString<JsonObject>(bodyText) }.getOrNull()
-        val msg = parsed?.get("error_description")?.jsonPrimitive?.contentOrNull
-            ?: parsed?.get("msg")?.jsonPrimitive?.contentOrNull
-            ?: parsed?.get("message")?.jsonPrimitive?.contentOrNull
-            ?: parsed?.get("error")?.jsonPrimitive?.contentOrNull
+        val msg = (parsed?.get("error_description") as? JsonPrimitive)?.contentOrNull
+            ?: (parsed?.get("msg") as? JsonPrimitive)?.contentOrNull
+            ?: (parsed?.get("message") as? JsonPrimitive)?.contentOrNull
+            ?: (parsed?.get("error") as? JsonPrimitive)?.contentOrNull
         return msg?.takeIf { it.isNotBlank() } ?: fallback
     }
 
@@ -643,11 +655,69 @@ class SupabaseClient(
     }
 
     companion object {
+        const val OWNER_EMAIL = "ec.mataac@gmail.com"
+
         private const val EXPENSE_SELECT =
             "*,wallets(name,color),categories(name,icon),payment_methods(label,type)"
         private const val INCOME_SELECT =
             "*,wallets(name,color)"
         private const val RECURRING_SELECT =
             "*,wallets(name,color),categories(name,icon),payment_methods(label,type)"
+
+        private val policyJson = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+
+        private val PERMANENT_REFRESH_ERROR_CODES = setOf(
+            "refresh_token_not_found",
+            "refresh_token_already_used",
+            "session_not_found",
+            "session_expired",
+            "bad_jwt",
+            "user_not_found",
+            "user_banned"
+        )
+
+        private val PERMANENT_REFRESH_TEXT_MARKERS = listOf(
+            "invalid refresh token",
+            "refresh token not found",
+            "already used",
+            "invalid_grant"
+        )
+
+        internal fun isAllowedOwnerEmail(email: String): Boolean =
+            email.trim().lowercase() == OWNER_EMAIL
+
+        internal fun shouldClearSessionOnRefreshFailure(statusCode: Int, bodyText: String): Boolean {
+            if (statusCode >= 500 || statusCode == 408 || statusCode == 429 || statusCode !in setOf(400, 401, 403)) {
+                return false
+            }
+            if (bodyText.isBlank()) return false
+
+            val parsed = runCatching { policyJson.decodeFromString<JsonObject>(bodyText) }.getOrNull()
+                ?: return false
+
+            fun field(name: String): String =
+                (parsed[name] as? JsonPrimitive)?.contentOrNull?.trim().orEmpty()
+
+            val error = field("error")
+            val errorCode = field("error_code").lowercase()
+            val msg = field("msg")
+            val message = field("message")
+            val errorDescription = field("error_description")
+
+            if (error.equals("invalid_grant", ignoreCase = true)) {
+                return true
+            }
+            if (errorCode in PERMANENT_REFRESH_ERROR_CODES) {
+                return true
+            }
+
+            val combined = listOf(error, errorCode, msg, message, errorDescription)
+                .joinToString(" ")
+                .lowercase()
+            return PERMANENT_REFRESH_TEXT_MARKERS.any { marker -> combined.contains(marker) }
+        }
     }
 }

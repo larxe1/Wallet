@@ -100,14 +100,20 @@ class AuthViewModel(private val repository: MoneyRepository) : ViewModel() {
         }
     }
 
-    fun signIn(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter both email and password.") }
+    fun signIn(email: String = SupabaseClient.OWNER_EMAIL, password: String) {
+        if (!SupabaseClient.isAllowedOwnerEmail(email)) {
+            _uiState.update {
+                it.copy(error = "This app is locked to ${SupabaseClient.OWNER_EMAIL}.")
+            }
+            return
+        }
+        if (password.isBlank()) {
+            _uiState.update { it.copy(error = "Please enter your password.") }
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, infoMessage = null) }
-            runCatching { repository.signIn(email, password) }
+            runCatching { repository.signIn(SupabaseClient.OWNER_EMAIL, password) }
                 .onSuccess { session ->
                     _uiState.update { it.copy(session = session, isLoading = false, error = null) }
                 }
@@ -119,33 +125,13 @@ class AuthViewModel(private val repository: MoneyRepository) : ViewModel() {
         }
     }
 
-    fun signUp(email: String, password: String) {
-        if (email.isBlank() || password.length < 6) {
-            _uiState.update { it.copy(error = "Enter a valid email and password (min 6 characters).") }
-            return
-        }
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null, infoMessage = null) }
-            runCatching { repository.signUp(email, password) }
-                .onSuccess { res ->
-                    _uiState.update {
-                        it.copy(
-                            session = res.session ?: it.session,
-                            isLoading = false,
-                            error = null,
-                            infoMessage = if (res.requiresEmailConfirmation) {
-                                "Account created! Check your email to confirm, then sign in."
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }
-                .onFailure { err ->
-                    _uiState.update {
-                        it.copy(isLoading = false, error = err.message ?: "Sign up failed")
-                    }
-                }
+    fun signUp(email: String = SupabaseClient.OWNER_EMAIL, password: String = "") {
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                error = "Account creation is disabled in single-user mode.",
+                infoMessage = null
+            )
         }
     }
 

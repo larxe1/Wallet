@@ -1,37 +1,33 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { AlertCircle, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { OWNER_EMAIL, useAuth } from '../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { signIn, signUp } = useAuth();
+  const { user, error: authError, signIn, clearError } = useAuth();
   const navigate = useNavigate();
 
-  const switchMode = (signUpMode) => {
-    setIsSignUp(signUpMode);
-    setError(null);
-  };
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const displayError = error || authError;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    clearError?.();
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        await signUp(email, password);
-      } else {
-        await signIn(email, password);
-      }
+      await signIn(OWNER_EMAIL, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Authentication failed');
@@ -64,66 +60,28 @@ const Login = () => {
             </svg>
           </div>
           <h1>Money Tracker</h1>
-          <p>Track your personal finances with clarity</p>
-        </div>
-
-        {/* Animated Segmented Auth Mode Toggle */}
-        <div className="auth-mode-switch" role="tablist" aria-label="Authentication mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={!isSignUp}
-            className={`auth-mode-btn ${!isSignUp ? 'is-active' : ''}`}
-            onClick={() => switchMode(false)}
-          >
-            {!isSignUp && (
-              <motion.span
-                layoutId="auth-mode-pill"
-                className="auth-mode-pill"
-                transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-              />
-            )}
-            <span className="auth-mode-label">Sign In</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={isSignUp}
-            className={`auth-mode-btn ${isSignUp ? 'is-active' : ''}`}
-            onClick={() => switchMode(true)}
-          >
-            {isSignUp && (
-              <motion.span
-                layoutId="auth-mode-pill"
-                className="auth-mode-pill"
-                transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-              />
-            )}
-            <span className="auth-mode-label">Create Account</span>
-          </button>
+          <p>Personal wallet for {OWNER_EMAIL} — stays signed in on this device.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
-          {error && (
+          {displayError && (
             <div className="login-error-banner" role="alert">
               <AlertCircle size={17} aria-hidden="true" />
-              <span>{error}</span>
+              <span>{displayError}</span>
             </div>
           )}
 
           <div className="login-field">
             <label htmlFor="email">Email</label>
-            <div className="login-input-wrap">
+            <div className="login-input-wrap is-locked">
               <Mail className="login-input-icon" size={16} aria-hidden="true" />
               <input
                 id="email"
                 type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                autoComplete="username"
+                value={OWNER_EMAIL}
+                readOnly
+                aria-readonly="true"
               />
             </div>
           </div>
@@ -135,7 +93,7 @@ const Login = () => {
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                autoComplete="current-password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -154,15 +112,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className="login-submit-btn" disabled={loading}>
-            <span>
-              {loading
-                ? isSignUp
-                  ? 'Creating Account…'
-                  : 'Signing In…'
-                : isSignUp
-                  ? 'Create Account'
-                  : 'Sign In'}
-            </span>
+            <span>{loading ? 'Signing In…' : 'Sign In'}</span>
             {!loading && <ArrowRight size={17} aria-hidden="true" />}
           </button>
         </form>

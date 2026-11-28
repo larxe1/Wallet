@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 
+export const OWNER_EMAIL = 'ec.mataac@gmail.com';
+
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
@@ -9,11 +11,26 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const applySession = async (session) => {
+      const rawEmail = session?.user?.email;
+      if (rawEmail && rawEmail.trim().toLowerCase() !== OWNER_EMAIL) {
+        setUser(null);
+        setError(`This app is locked to ${OWNER_EMAIL}.`);
+        try {
+          await supabase.auth.signOut();
+        } catch {
+          // Ignore signOut errors while rejecting a non-owner session.
+        }
+        return;
+      }
+      setUser(session?.user ?? null);
+    };
+
     const getSession = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
-        setUser(session?.user ?? null);
+        await applySession(session);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -25,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user ?? null);
+        applySession(session);
       }
     );
 
@@ -37,7 +54,14 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       setError(null);
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const normalizedEmail = (email || OWNER_EMAIL).trim().toLowerCase();
+      if (normalizedEmail !== OWNER_EMAIL) {
+        throw new Error(`This app is locked to ${OWNER_EMAIL}.`);
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: OWNER_EMAIL,
+        password
+      });
       if (signInError) throw signInError;
     } catch (err) {
       setError(err.message);
@@ -45,15 +69,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signUp = async (email, password) => {
-    try {
-      setError(null);
-      const { error: signUpError } = await supabase.auth.signUp({ email, password });
-      if (signUpError) throw signUpError;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
+  const signUp = async () => {
+    const err = new Error('Account creation is disabled in single-user mode.');
+    setError(err.message);
+    throw err;
   };
 
   const signOut = async () => {

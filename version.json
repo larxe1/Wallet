@@ -1,6 +1,6 @@
 {
-  "version": "1.2.1",
-  "build": 3,
-  "releasedAt": "2026-11-27T22:30:00Z",
-  "releaseNotes": "Fix Philippine Peso symbol rendering across all views using bundled Inter typography, replace all emojis with crisp Material vector icons, and refine the UI into a calmer obsidian ledger layout."
+  "version": "1.2.2",
+  "build": 4,
+  "releasedAt": "2026-11-28T02:20:00Z",
+  "releaseNotes": "Lock sign-in to owner account, keep device sessions signed in across temporary network errors, and require persistent release signing for Obtainium updates."
 }

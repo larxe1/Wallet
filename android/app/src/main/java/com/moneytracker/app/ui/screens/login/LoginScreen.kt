@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material.icons.rounded.WarningAmber
@@ -44,7 +45,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -52,37 +52,28 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.moneytracker.app.data.remote.SupabaseClient
 import com.moneytracker.app.ui.components.EmeraldPrimaryButton
 import com.moneytracker.app.ui.components.MoneyTrackerLogoMark
-import com.moneytracker.app.ui.components.ObsidianSegmentedPill
 import com.moneytracker.app.ui.components.ObsidianSurfaceCard
 import com.moneytracker.app.ui.theme.ObsidianColors
 import com.moneytracker.app.viewmodel.AuthViewModel
-
-private enum class AuthMode {
-    SIGN_IN,
-    CREATE_ACCOUNT
-}
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+    val ownerEmail = SupabaseClient.OWNER_EMAIL
 
-    var mode by rememberSaveable { mutableStateOf(AuthMode.SIGN_IN) }
-    var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     fun submit() {
         focusManager.clearFocus()
-        if (mode == AuthMode.SIGN_IN) {
-            viewModel.signIn(email.trim(), password)
-        } else {
-            viewModel.signUp(email.trim(), password)
-        }
+        viewModel.signIn(ownerEmail, password)
     }
 
     Box(
@@ -113,22 +104,14 @@ fun LoginScreen(viewModel: AuthViewModel) {
                     style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold),
                     color = ObsidianColors.TextPrimary
                 )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Personal wallet — stays signed in automatically on this device",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ObsidianColors.TextSecondary,
+                    textAlign = TextAlign.Center
+                )
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            ObsidianSegmentedPill(
-                options = listOf(
-                    AuthMode.SIGN_IN to "Sign In",
-                    AuthMode.CREATE_ACCOUNT to "Create Account"
-                ),
-                selected = mode,
-                onSelect = {
-                    mode = it
-                    viewModel.clearMessages()
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
 
             if (!state.isSupabaseConfigured) {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -139,7 +122,19 @@ fun LoginScreen(viewModel: AuthViewModel) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            val lockedEmailColors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = ObsidianColors.ObsidianCanvas,
+                unfocusedContainerColor = ObsidianColors.ObsidianCanvas,
+                focusedBorderColor = ObsidianColors.HairlineHover,
+                unfocusedBorderColor = ObsidianColors.HairlineHover,
+                focusedLabelColor = ObsidianColors.TextSecondary,
+                unfocusedLabelColor = ObsidianColors.TextSecondary,
+                focusedTextColor = ObsidianColors.TextSecondary,
+                unfocusedTextColor = ObsidianColors.TextSecondary,
+                cursorColor = Color.Transparent
+            )
 
             val fieldColors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = ObsidianColors.ObsidianCanvas,
@@ -154,23 +149,22 @@ fun LoginScreen(viewModel: AuthViewModel) {
             )
 
             OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    if (state.error != null) viewModel.clearMessages()
-                },
-                label = { Text("Email") },
+                value = ownerEmail,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Account") },
                 singleLine = true,
                 enabled = !state.isLoading,
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Lock,
+                        contentDescription = "Locked account",
+                        tint = ObsidianColors.TextSecondary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
                 shape = RoundedCornerShape(12.dp),
-                colors = fieldColors,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                ),
+                colors = lockedEmailColors,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -182,9 +176,7 @@ fun LoginScreen(viewModel: AuthViewModel) {
                     password = it
                     if (state.error != null) viewModel.clearMessages()
                 },
-                label = {
-                    Text(if (mode == AuthMode.CREATE_ACCOUNT) "Password (6+ chars)" else "Password")
-                },
+                label = { Text("Password") },
                 singleLine = true,
                 enabled = !state.isLoading,
                 shape = RoundedCornerShape(12.dp),
@@ -257,9 +249,9 @@ fun LoginScreen(viewModel: AuthViewModel) {
                 }
             } else {
                 EmeraldPrimaryButton(
-                    text = if (mode == AuthMode.SIGN_IN) "Sign In" else "Create Account",
+                    text = "Sign In",
                     onClick = { submit() },
-                    enabled = email.isNotBlank() && password.isNotBlank(),
+                    enabled = password.isNotBlank(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
